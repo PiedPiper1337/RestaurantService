@@ -15,6 +15,7 @@ import play.i18n.Lang;
 import play.libs.F;
 import play.libs.F.*;
 import play.twirl.api.Content;
+import views.html.index;
 
 import static play.test.Helpers.*;
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ public class ApplicationTest {
 
     @Test
     public void renderTemplate() {
-        Content html = views.html.index.render("Your new application is ready.");
+        Content html = index.render("Your new application is ready.");
         assertEquals("text/html", contentType(html));
         assertTrue(contentAsString(html).contains("Your new application is ready."));
     }
