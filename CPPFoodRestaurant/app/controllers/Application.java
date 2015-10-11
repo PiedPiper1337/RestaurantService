@@ -13,6 +13,8 @@ public class Application extends Controller {
         return ok(index.render("Your new application is ready."));
     }
 
-    
-
+    public Result login() {
+        logger.trace("login method called");
+        return ok(index.render("This is the login page"));
+    }
 }
