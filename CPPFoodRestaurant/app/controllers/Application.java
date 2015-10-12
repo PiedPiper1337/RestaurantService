@@ -24,7 +24,7 @@ public class Application extends Controller {
      */
     public Result helloWorld() {
         logger.trace("hello world method called");
-        HashMap javaObject = new HashMap();
+        HashMap<String,String> javaObject = new HashMap<>();
         javaObject.put("Message", "Hello World");
         javaObject.put("Here is the key", "Here is the value");
         JsonNode json = Json.toJson(javaObject);
