@@ -4,15 +4,16 @@
 
 # Home page
 GET        /                    @controllers.Application.index()
-
-
-GET        /aliens              @controllers.Application.aliens()
-GET        /helloworld          @controllers.Application.helloWorld()
-GET        /login               @controllers.Application.login()
-
-
-#GET        /watch               @controllers.Application.summarize()
 GET        /watch               @controllers.Application.demo()
+
+#GET        /aliens              @controllers.Application.aliens()
+#GET        /helloworld          @controllers.Application.helloWorld()
+#GET        /login               @controllers.Application.login()
+
+
+
+
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
