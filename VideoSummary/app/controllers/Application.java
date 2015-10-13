@@ -1,11 +1,14 @@
 package controllers;
 
+import Utils.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
+import views.html.video;
 
 import java.util.HashMap;
 
@@ -16,6 +19,22 @@ public class Application extends Controller {
         logger.trace("index method called");
         return ok(index.render("Your new application is ready."));
     }
+
+    public Result demo() {
+        logger.trace("demo method called");
+        String videoId = request().getQueryString("v");
+        if (videoId == null) {
+            logger.debug("video query was null, redirecting to index");
+            return redirect(controllers.routes.Application.index());
+        }
+        logger.debug("returning actual video string");
+        String videoURLToEmbed = Constants.EMBED_URL + videoId;
+        logger.debug("video url is: {}", videoURLToEmbed);
+        return ok(video.render(videoURLToEmbed));
+    }
+
+
+
 
     /**
      * example json return method
