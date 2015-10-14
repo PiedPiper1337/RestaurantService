@@ -1,49 +1,46 @@
 package controllers;
 
-import Utils.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import Utils.Constants;
+import Utils.StringManipulation;
 import play.Logger;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.index;
 import views.html.video;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.File;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
 
-    public Result index() {
-        logger.trace("index method called");
-        return ok(index.render());
-    }
+//    public Result index() {
+//        logger.trace("index method called");
+//        return redirect("/index.html");
+////        return ok(new File("public/html/index.html")).as("text/html");
+//
+//    }
 
     /**
      * takes a url with v parameter
      * checks if the url is directly inside or inside an entire url
      * displays youtube video
+     *
      * @return
      */
-    public Result demo() {
+    public Result displayVideo() {
         logger.trace("demo method called");
         String videoId = request().getQueryString("v");
         if (videoId == null) {
             logger.debug("video query was null, redirecting to index");
-            return redirect(controllers.routes.Application.index());
-        }else if (videoId.contains("youtube.com")) {
-            videoId =StringManipulation.extractParameter(videoId, "v");
+//            return redirect(controllers.routes.Application.index());
+            return redirect("/");
+        } else if (videoId.contains("youtube.com")) {
+            videoId = StringManipulation.extractParameter(videoId, "v");
         }
         logger.debug("returning actual video string");
         String videoURLToEmbed = Constants.EMBED_URL + videoId;
         logger.debug("video url is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
     }
-
-
 
 
 //
@@ -71,4 +68,5 @@ public class Application extends Controller {
 //        logger.trace("Aliens! OoOoOoOoOoOo!!!");
 //        return ok(index.render("Aliens! OoOoOoOoOoOo!!!"));
 //    }
+
 }
