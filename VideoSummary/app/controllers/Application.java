@@ -5,6 +5,7 @@ import Utils.StringManipulation;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import views.html.video;
 
 import java.io.File;
@@ -12,12 +13,11 @@ import java.io.File;
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
 
-//    public Result index() {
-//        logger.trace("index method called");
-//        return redirect("/index.html");
-////        return ok(new File("public/html/index.html")).as("text/html");
-//
-//    }
+    @With(IPAction.class)
+    public Result index() {
+        logger.trace("index method called");
+        return ok(views.html.index.render());
+    }
 
     /**
      * takes a url with v parameter
