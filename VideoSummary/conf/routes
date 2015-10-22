@@ -3,7 +3,8 @@
 # ~~~~
 
 # Home page
-GET        /                    @controllers.Assets.at(path="/public/html",file="index.html")
+#GET        /                    @controllers.Assets.at(path="/public/html",file="index.html")
+GET        /                    @controllers.Application.index()
 GET        /watch               @controllers.Application.displayVideo()
 
 

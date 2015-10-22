@@ -1,4 +1,4 @@
-name := """CPPFoodRestaurant"""
+name := """VideoSummary"""
 
 version := "1.0-SNAPSHOT"
 
