@@ -10,7 +10,8 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
-  "junit" % "junit" % "4.11"
+  "junit"       % "junit"        % "4.11",
+  "org.jgrapht" % "jgrapht-core" % "0.9.1"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the
