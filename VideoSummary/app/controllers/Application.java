@@ -8,19 +8,20 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.Constants;
-import utils.StringManip;
+import utils.*;
+import utils.Factories.ChromeFactory;
 import views.html.video;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
 
-    @Inject
-    @Singleton
-    private static WebDriver webDriver;
+    /*
+        the webdriver should be dependency injected as singleton, but i don't know why it's not working. so right
+        now, this is using a factory pattern instead
+     */
+//    @Inject
+//    @Singleton
+    private static WebDriver browser = ChromeFactory.getInstance();
 
 
     @With(IPAction.class)
@@ -29,7 +30,11 @@ public class Application extends Controller {
         return ok(views.html.index.render());
     }
 
-
+    /**
+     * we should replace this with a fail whale picture when we deploy
+     * @param badResource
+     * @return
+     */
     public Result genericFailure(String badResource) {
         logger.trace("bad url attempt at {}", badResource);
         return badRequest("This page does not exist.");
@@ -37,8 +42,8 @@ public class Application extends Controller {
 
 
     /**
-     * takes a url with v parameter
-     * checks if the url is directly inside or inside an entire url
+     * takes a http request with v parameter
+     * checks if the url is directly inside 'v' or inside an entire url
      * displays youtube video
      *
      * @return
@@ -50,13 +55,34 @@ public class Application extends Controller {
             logger.debug("video query was null, redirecting to index");
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
-        } else if (videoId.contains("youtube.com")) {
+        }
+
+        if (StringManip.isFullUrl(videoId)) {
             videoId = StringManip.extractParameter(videoId, "v");
         }
+
         logger.debug("returning actual video string");
         String videoURLToEmbed = Constants.EMBED_URL + videoId;
         logger.debug("video url is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
+    }
+
+    public Result displayTranscript() {
+        logger.trace("transcript method called");
+        String videoId = request().getQueryString("v");
+        if (videoId == null) {
+            logger.debug("video query was null, redirecting to index");
+//            return redirect(controllers.routes.Application.index());
+            return redirect("/");
+        }
+
+        String transcript;
+        if (StringManip.isFullUrl(videoId)) {
+            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId, browser);
+        } else {
+            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId, browser);
+        }
+        return ok(transcript);
     }
 
     public Result getSummarization() {
@@ -66,7 +92,5 @@ public class Application extends Controller {
 
         return ok("Here you go..");
     }
-
-
 
 }

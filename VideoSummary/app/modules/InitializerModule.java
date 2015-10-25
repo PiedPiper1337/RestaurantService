@@ -8,6 +8,7 @@ import play.Logger;
 /**
  * Created by brianzhao on 10/25/15.
  */
+
 public class InitializerModule extends AbstractModule {
     private static final org.slf4j.Logger logger = Logger.of(InitializerModule.class).underlying();
 
