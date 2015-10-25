@@ -1,7 +1,7 @@
 package controllers;
 
-import Utils.Constants;
-import Utils.StringManipulation;
+import utils.Constants;
+import utils.StringManip;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -35,7 +35,7 @@ public class Application extends Controller {
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
         } else if (videoId.contains("youtube.com")) {
-            videoId = StringManipulation.extractParameter(videoId, "v");
+            videoId = StringManip.extractParameter(videoId, "v");
         }
         logger.debug("returning actual video string");
         String videoURLToEmbed = Constants.EMBED_URL + videoId;
