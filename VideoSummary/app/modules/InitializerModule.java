@@ -9,6 +9,8 @@ import play.api.inject.Module;
 
 import scala.collection.Seq;
 
+import javax.inject.Singleton;
+
 /**
  * Created by brianzhao on 10/25/15.
  */
@@ -16,8 +18,7 @@ public class InitializerModule extends Module {
     @Override
     public Seq<Binding<?>> bindings(Environment environment, Configuration configuration) {
         return seq(
-                bind(WebDriver.class, ChromeDriver.class)
-        );
+                bind(WebDriver.class).to(ChromeDriver.class));
     }
 
 }

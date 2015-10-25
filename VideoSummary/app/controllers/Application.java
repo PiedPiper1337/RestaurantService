@@ -1,5 +1,6 @@
 package controllers;
 
+import org.openqa.selenium.WebDriver;
 import utils.Constants;
 import utils.StringManip;
 import org.jgrapht.Graph;
@@ -9,15 +10,26 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
+import utils.TranscriptGenerator;
 import views.html.video;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
 
+    @Inject
+    private WebDriver webDriver;
+
+
     @With(IPAction.class)
+
     public Result index() {
         logger.trace("index method called");
-        return ok(views.html.index.render());
+//        return ok(views.html.index.render());
+//        TranscriptGenerator.getTranscriptFromFullURL(null);
+        return ok(webDriver.toString());
     }
 
     /**

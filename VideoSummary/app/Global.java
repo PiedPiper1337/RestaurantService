@@ -1,5 +1,3 @@
-package global;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import play.Application;
@@ -7,22 +5,21 @@ import play.GlobalSettings;
 import play.Logger;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Created by brianzhao on 10/11/15.
  */
-public class PlayGlobal extends GlobalSettings {
-    private static final org.slf4j.Logger logger = Logger.of(PlayGlobal.class).underlying();
-    public static OSType currentOS;
+public class Global extends GlobalSettings {
+    enum OSType{
+        Linux,Mac,Windows
+    }
 
-    @Inject
-    public static WebDriver browser;
+    private static final org.slf4j.Logger logger = Logger.of(Global.class).underlying();
 
     @Override
     public void onStart(Application application) {
         logger.trace("Application has started");
-
+        OSType currentOS;
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.startsWith("mac")) {
             currentOS = OSType.Mac;
@@ -31,17 +28,15 @@ public class PlayGlobal extends GlobalSettings {
         } else {
             currentOS = OSType.Linux;
         }
+        logger.debug("Detected operating system: {}", currentOS);
+
 
         if (currentOS.equals(OSType.Mac)) {
             System.setProperty("webdriver.chrome.driver", "chromedriverMac");
         }else if (currentOS.equals(OSType.Linux)) {
             System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
         }
-        System.out.println(currentOS);
-
-        browser = new ChromeDriver();
-        logger.debug("ChromeDriver has started");
-
+        logger.debug("chromedriver environment path set");
     }
 
     @Override
@@ -50,6 +45,3 @@ public class PlayGlobal extends GlobalSettings {
     }
 }
 
-enum OSType{
-    Linux,Mac,Windows
-}
