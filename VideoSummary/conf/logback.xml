@@ -25,7 +25,8 @@
     <logger name="application" level="DEBUG"/>
     <logger name="controllers" level="TRACE"/>
     <logger name="models" level="TRACE"/>
-    <logger name="Global" level="TRACE"/>
+    <logger name="modules" level="TRACE"/>
+    <logger name="utils" level="TRACE"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
