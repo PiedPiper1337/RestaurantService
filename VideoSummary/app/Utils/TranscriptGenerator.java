@@ -1,27 +1,24 @@
-
 package utils;
-
-
-import global.PlayGlobal;
 import org.openqa.selenium.WebDriver;
 
-import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  * Created by brianzhao on 10/25/15.
  */
 public class TranscriptGenerator {
-    @Inject
-    private static WebDriver browser;
 
-    public static String getTranscriptFromVideoID(String videoId) {
-        System.out.println(browser);
+    private static final int TIMEOUT = 3;
 
-        return null;
+    public static String getTranscriptFromVideoID(String videoId, WebDriver browser) {
+        return getTranscriptFromFullURL(StringManip.generateUrlFromVideoId(videoId), browser);
     }
 
-    public static String getTranscriptFromFullURL(String url) {
-        return getTranscriptFromVideoID(StringManip.getVideoId(url));
+    public static String getTranscriptFromFullURL(String url, WebDriver browser) {
+        browser.manage().timeouts().implicitlyWait(TIMEOUT, TimeUnit.SECONDS);
+
+
+        return null;
     }
 }
