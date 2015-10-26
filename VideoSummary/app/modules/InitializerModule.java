@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import play.Logger;
-import Utils.TranscriptGenerator;
+import utils.TranscriptGenerator;
 
 /**
  * Created by brianzhao on 10/25/15.
