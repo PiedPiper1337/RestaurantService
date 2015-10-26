@@ -10,7 +10,12 @@ import play.mvc.Result;
 import play.mvc.With;
 import utils.*;
 import utils.Factories.ChromeFactory;
+import utils.Factories.FirefoxFactory;
+import utils.Factories.WebDriverFactory;
 import views.html.video;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
@@ -21,7 +26,9 @@ public class Application extends Controller {
      */
 //    @Inject
 //    @Singleton
-    private static WebDriver browser = ChromeFactory.getInstance();
+//    private static WebDriver browser = WebDriverFactory.getInstance();
+    @Inject
+    private WebDriver browser;
 
 
     @With(IPAction.class)

@@ -12,28 +12,19 @@ import play.Logger;
 public class InitializerModule extends AbstractModule {
     private static final org.slf4j.Logger logger = Logger.of(InitializerModule.class).underlying();
 
-    enum OSType {
-        Linux, Mac, Windows
-    }
 
     @Override
     protected void configure() {
-        OSType currentOS;
         String osName = System.getProperty("os.name").toLowerCase();
+        logger.debug("Detected operating system: {}", osName);
         if (osName.startsWith("mac")) {
-            currentOS = OSType.Mac;
-        } else if (osName.startsWith("window")) {
-            currentOS = OSType.Windows;
-        } else {
-            currentOS = OSType.Linux;
-        }
-        logger.debug("Detected operating system: {}", currentOS);
-
-        if (currentOS.equals(OSType.Mac)) {
             System.setProperty("webdriver.chrome.driver", "chromedriverMac");
-        } else if (currentOS.equals(OSType.Linux)) {
+        } else if (osName.startsWith("window")) {
+            //do nothing for now
+        } else {
             System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
         }
+
         logger.debug("chromedriver environment path set");
         bind(WebDriver.class).to(ChromeDriver.class).asEagerSingleton();
     }

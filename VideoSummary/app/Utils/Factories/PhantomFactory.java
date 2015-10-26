@@ -24,7 +24,6 @@ public class PhantomFactory {
         } else {
             return phantomJsDriver;
         }
-
     }
 
 }
