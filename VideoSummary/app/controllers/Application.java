@@ -7,7 +7,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.Factories.Constants;
+import utils.Constants;
 import utils.StringManip;
 import utils.TranscriptGenerator;
 import views.html.video;
