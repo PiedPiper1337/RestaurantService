@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 import com.google.inject.Inject;
 import org.jsoup.Jsoup;

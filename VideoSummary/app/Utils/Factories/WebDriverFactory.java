@@ -1,4 +1,4 @@
-package Utils.Factories;
+package utils.Factories;
 
 import org.openqa.selenium.WebDriver;
 
