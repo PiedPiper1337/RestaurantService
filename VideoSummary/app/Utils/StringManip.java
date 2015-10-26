@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class StringManip {
     public static String extractParameter(String url, String key) {
-        String[] entireUrlString= url.split("\\?");
+        String[] entireUrlString = url.split("\\?");
         if (entireUrlString.length != 2) {
             throw new RuntimeException();
         }
@@ -18,7 +18,7 @@ public class StringManip {
         }
         HashMap<String, String> keyValueMap = new HashMap<>();
 
-        for (int i = 0; i < keyValue.length; i+=2) {
+        for (int i = 0; i < keyValue.length; i += 2) {
             keyValueMap.put(keyValue[i], keyValue[i + 1]);
         }
         String toReturn = keyValueMap.get(key);

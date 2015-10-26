@@ -1,4 +1,6 @@
 package utils;
+
+import com.google.inject.Inject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +11,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import play.Logger;
-import play.data.DynamicForm;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,17 +23,20 @@ public class TranscriptGenerator {
 
     private static final int TIMEOUT = 3;
 
-    public static String getTranscriptFromVideoID(String videoId, WebDriver browser) {
-        return getTranscriptFromFullURL(StringManip.generateUrlFromVideoId(videoId), browser);
+    @Inject
+    private static WebDriver browser;
+
+    public static String getTranscriptFromVideoID(String videoId) {
+        return getTranscriptFromFullURL(StringManip.generateUrlFromVideoId(videoId));
     }
 
     /**
      * attempts to get a string representation of the transcript from a youtube url
+     *
      * @param url
-     * @param browser
      * @return
      */
-    public static String getTranscriptFromFullURL(String url, WebDriver browser) {
+    public static String getTranscriptFromFullURL(String url) {
         long startTime = System.currentTimeMillis();
         browser.manage().timeouts().implicitlyWait(TIMEOUT, TimeUnit.SECONDS);
         WebElement moreButton = null;
@@ -81,7 +85,7 @@ public class TranscriptGenerator {
             }
             logger.debug("transcript successfully parsed");
             long finishTime = System.currentTimeMillis();
-            logger.debug("time taken: {}", (finishTime-startTime)*1.0/1000);
+            logger.debug("time taken: {}", (finishTime - startTime) * 1.0 / 1000);
             //before returning, we should reset browser
             browser.get("http://www.blankwebsite.com/");
             return toReturn.toString();

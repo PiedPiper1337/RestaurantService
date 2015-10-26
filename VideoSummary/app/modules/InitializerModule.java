@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import play.Logger;
+import utils.TranscriptGenerator;
 
 /**
  * Created by brianzhao on 10/25/15.
@@ -26,6 +27,7 @@ public class InitializerModule extends AbstractModule {
         }
 
         logger.debug("chromedriver environment path set");
+        requestStaticInjection(TranscriptGenerator.class);
         bind(WebDriver.class).to(ChromeDriver.class).asEagerSingleton();
     }
 }

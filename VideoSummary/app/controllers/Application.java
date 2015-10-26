@@ -3,32 +3,17 @@ package controllers;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.openqa.selenium.WebDriver;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.*;
-import utils.Factories.ChromeFactory;
-import utils.Factories.FirefoxFactory;
-import utils.Factories.WebDriverFactory;
+import utils.Constants;
+import utils.StringManip;
+import utils.TranscriptGenerator;
 import views.html.video;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
-
-    /*
-        the webdriver should be dependency injected as singleton, but i don't know why it's not working. so right
-        now, this is using a factory pattern instead
-     */
-//    @Inject
-//    @Singleton
-//    private static WebDriver browser = WebDriverFactory.getInstance();
-    @Inject
-    private WebDriver browser;
 
 
     @With(IPAction.class)
@@ -39,6 +24,7 @@ public class Application extends Controller {
 
     /**
      * we should replace this with a fail whale picture when we deploy
+     *
      * @param badResource
      * @return
      */
@@ -85,9 +71,9 @@ public class Application extends Controller {
 
         String transcript;
         if (StringManip.isFullUrl(videoId)) {
-            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId, browser);
+            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId);
         } else {
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId, browser);
+            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
         }
         return ok(transcript);
     }
