@@ -5,4 +5,5 @@ package Utils;
  */
 public class Constants {
     public static final String EMBED_URL = "https://www.youtube.com/embed/";
+    public static final String YOUTUBE_WATCH_URL = "https://www.youtube.com/watch/";
 }

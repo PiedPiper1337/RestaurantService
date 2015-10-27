@@ -1,14 +1,11 @@
 package controllers;
 
-import Utils.Constants;
 import Utils.StringManipulation;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
 import views.html.video;
-
-import java.io.File;
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
@@ -37,7 +34,7 @@ public class Application extends Controller {
             videoId = StringManipulation.extractParameter(videoId, "v");
         }
         logger.debug("returning actual video string");
-        String videoURLToEmbed = Constants.EMBED_URL + videoId;
+        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
         logger.debug("video url is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
     }
