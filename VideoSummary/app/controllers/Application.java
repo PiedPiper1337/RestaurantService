@@ -1,5 +1,6 @@
 package controllers;
 
+import models.YoutubeVideo;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -62,19 +63,24 @@ public class Application extends Controller {
 
     public Result displayTranscript() {
         logger.trace("transcript method called");
-        String videoId = request().getQueryString("v");
-        if (videoId == null) {
+        String vParameter = request().getQueryString("v");
+        if (vParameter == null) {
             logger.debug("video query was null, redirecting to index");
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
         }
 
+        String videoId = StringManip.isFullUrl(vParameter) ? StringManip.getVideoId(vParameter):vParameter;
         String transcript;
-        if (StringManip.isFullUrl(videoId)) {
-            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId);
-        } else {
+        YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
+        if (youtubeVideo == null) {
             transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
+            youtubeVideo = new YoutubeVideo(videoId, transcript);
+            youtubeVideo.save();
+        } else {
+            transcript = youtubeVideo.getTranscript();
         }
+
         return ok(transcript);
     }
 

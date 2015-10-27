@@ -13,7 +13,6 @@ import utils.TranscriptGenerator;
 public class InitializerModule extends AbstractModule {
     private static final org.slf4j.Logger logger = Logger.of(InitializerModule.class).underlying();
 
-
     @Override
     protected void configure() {
         String osName = System.getProperty("os.name").toLowerCase();
