@@ -70,7 +70,7 @@ public class Application extends Controller {
             return redirect("/");
         }
 
-        String videoId = StringManip.isFullUrl(vParameter) ? StringManip.getVideoId(vParameter):vParameter;
+        String videoId = StringManip.isFullUrl(vParameter) ? StringManip.getVideoId(vParameter) : vParameter;
         String transcript;
         YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
         if (youtubeVideo == null) {

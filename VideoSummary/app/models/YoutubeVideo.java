@@ -1,10 +1,11 @@
 package models;
 
 import com.avaje.ebean.Model;
+import play.data.validation.Constraints;
 
-import javax.persistence.*;
-
-import play.data.validation.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Created by brianzhao on 10/27/15.
@@ -47,5 +48,5 @@ public class YoutubeVideo extends Model {
         this.videoId = videoId;
     }
 
-    public static Finder<Long, YoutubeVideo> find = new Finder<Long,YoutubeVideo>(YoutubeVideo.class);
+    public static Finder<Long, YoutubeVideo> find = new Finder<Long, YoutubeVideo>(YoutubeVideo.class);
 }

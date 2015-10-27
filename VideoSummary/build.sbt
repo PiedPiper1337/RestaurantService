@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   cache,
   javaWs,
   "junit" % "junit" % "4.11",
+  "org.easytesting" % "fest-assert" % "1.4",
   "org.seleniumhq.selenium" % "selenium-java" % "2.48.2",
   "org.jsoup" % "jsoup" % "1.8.3",
   "com.github.detro" % "phantomjsdriver" % "1.2.0",
