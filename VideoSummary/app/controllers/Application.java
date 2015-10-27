@@ -1,6 +1,5 @@
 package controllers;
 
-import Utils.Constants;
 import Utils.StringManipulation;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -38,7 +37,7 @@ public class Application extends Controller {
             videoId = StringManipulation.extractParameter(videoId, "v");
         }
         logger.debug("returning actual video string");
-        String videoURLToEmbed = Constants.EMBED_URL + videoId;
+        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
         logger.debug("video url is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
     }
