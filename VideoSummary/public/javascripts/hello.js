@@ -1,11 +1,12 @@
 /**
  * Three test sections of the video to play
- * */
+ *
 var testSlices = [
     {start: 4, end: 10},
     {start: 12, end: 19},
     {start: 35, end: 45}
 ];
+ */
 
 /**
  * The player object that allows us to interact with the iframe
@@ -28,7 +29,7 @@ function onYouTubeIframeAPIReady() {
  * */
 function onPlayerReady(event) {
     //event.target.playVideo();
-    playSlices(testSlices);
+    //playSlices(testSlices);
 }
 
 var done = false;
@@ -50,7 +51,7 @@ function stopVideo() {
  * Execute this to start playing all the sections in the testSlices array
  * */
 function playSlices(arr) {
-    console.log("testSlices has " + testSlices.length);
+    console.log("testSlices has " + arr.length);
 
     if (arr.length > 0) {
         player.pauseVideo();
@@ -66,5 +67,14 @@ function playSlices(arr) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    $("#summarizeButton").on('click', function() {
+        var testSlices = [
+            {start: 4, end: 10},
+            {start: 12, end: 19},
+            {start: 35, end: 45}
+        ];
+
+        playSlices(testSlices);
+    });
     // Put anything you want to happen when the page is finished loading
 }, false);
