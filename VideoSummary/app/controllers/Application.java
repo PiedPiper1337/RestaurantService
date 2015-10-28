@@ -74,10 +74,17 @@ public class Application extends Controller {
         String transcript;
         YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
         if (youtubeVideo == null) {
+            logger.debug("video hasn't been seen before");
             transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
             youtubeVideo = new YoutubeVideo(videoId, transcript);
             youtubeVideo.save();
+        } else if (youtubeVideo.getTranscript() == null) {
+            logger.debug("filling in nonexistent transcript");
+            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
+            youtubeVideo.setTranscript(transcript);
+            youtubeVideo.save();
         } else {
+            logger.debug("using database transcript");
             transcript = youtubeVideo.getTranscript();
         }
 

@@ -2,7 +2,6 @@ package modules;
 
 import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
 import utils.TranscriptGenerator;
