@@ -5,12 +5,24 @@
 <html lang="en">
     <head>
         <title>Video</title>
-        @*<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">*@
-        @*<link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">*@
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script type="text/javascript">
+            window.vvv = "@video";
+        </script>
+
+        <script src="https://www.youtube.com/iframe_api" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/jquery-2.1.4.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+
     </head>
     <body>
-        @*<iframe width="560" height="315" src=@video frameborder="0" allowfullscreen></iframe>*@
-        <iframe width="800" height="450" src=@video frameborder="0" allowfullscreen></iframe>
+        <div id="videoDiv">
+
+        </div>
+
+        <div id="footnoteDiv">
+            <button id="summarizeButton" type="button">Play Summarization</button>
+        </div>
     </body>
 </html>

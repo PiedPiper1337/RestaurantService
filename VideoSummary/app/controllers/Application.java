@@ -55,7 +55,7 @@ public class Application extends Controller {
         }
 
         logger.debug("returning actual video string");
-        String videoURLToEmbed = Constants.EMBED_URL + videoId;
+        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
         logger.debug("video url is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
     }
