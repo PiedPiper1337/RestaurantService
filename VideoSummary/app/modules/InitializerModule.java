@@ -4,10 +4,12 @@ import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import play.Logger;
+import utils.ChromeDriverCustom;
 import utils.TranscriptGenerator;
 
 /**
  * Created by brianzhao on 10/25/15.
+ * https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection#Stopping/cleaning-up
  */
 
 public class InitializerModule extends AbstractModule {
@@ -27,7 +29,7 @@ public class InitializerModule extends AbstractModule {
 
         logger.debug("chromedriver environment path set");
         requestStaticInjection(TranscriptGenerator.class);
-        bind(WebDriver.class).to(ChromeDriver.class).asEagerSingleton();
+        bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
     }
 }
 
