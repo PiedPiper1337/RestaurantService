@@ -8,7 +8,9 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
 import utils.Constants;
+import utils.Pipeline;
 import utils.StringManip;
+import utils.Summarizer.Summary;
 import utils.TranscriptGenerator;
 import views.html.video;
 
@@ -80,10 +82,38 @@ public class Application extends Controller {
 
     public Result getSummarization() {
 
-        Graph<Object, Object> testGraph = new SimpleGraph<Object, Object>(DefaultEdge.class);
+        Graph<Object, Object> testGraph = new SimpleGraph<>(DefaultEdge.class);
         logger.debug("Yay I made a graph to fulfill A5 requirements!");
 
         return ok("Here you go..");
     }
 
+    public Result runNLP() throws Exception{
+        logger.debug("Processing aScandalInBohemia");
+        String title = "NLPData/aScandalInBohemia";
+        String analyzed = Pipeline.pos(title);
+        return ok(analyzed);
+    }
+
+    public Result summarize() {
+        logger.debug("Summarization");
+        String videoId = request().getQueryString("s");
+
+        //Transcript
+        if (videoId == null) {
+            logger.debug("video query was null, redirecting to index");
+//            return redirect(controllers.routes.Application.index());
+            return redirect("/");
+        }
+
+        String transcript;
+        if (StringManip.isFullUrl(videoId)) {
+            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId);
+        } else {
+            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
+        }
+
+        Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
+        return ok(summary.toString()); //Currently returns all
+    }
 }
