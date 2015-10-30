@@ -1,28 +1,16 @@
 package tests;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Module;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import play.Application;
-import play.ApplicationLoader;
-import play.Environment;
 import play.Logger;
-import play.inject.guice.GuiceApplicationBuilder;
-import play.inject.guice.GuiceApplicationLoader;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.test.Helpers;
 import play.test.WithApplication;
-import utils.TranscriptGenerator;
-
-import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
@@ -83,6 +71,17 @@ public class ControllerTest extends WithApplication {
     @Test
     public void testRandom() {
         assertEquals(1+1,2);
+    }
+
+    @Test
+    public void testDiplayTranscript() {
+        Http.RequestBuilder request = new Http.RequestBuilder()
+                .method(GET)
+                .uri("/transcript");
+
+        Result result = route(request);
+        assertEquals(OK, result.status());
+        assertEquals("text/html", result.contentType());
     }
 
     @After
