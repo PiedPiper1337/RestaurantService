@@ -2,7 +2,9 @@ name := """VideoSummary"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayJava, PlayEbean)
+
 
 scalaVersion := "2.11.6"
 
@@ -15,6 +17,7 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.8.3",
   "com.github.detro" % "phantomjsdriver" % "1.2.0",
   "org.jgrapht" % "jgrapht-core" % "0.9.1",
+  "mysql" % "mysql-connector-java" % "5.1.35",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.opennlp-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.languagetool-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.maltparser-asl" % "1.7.0",

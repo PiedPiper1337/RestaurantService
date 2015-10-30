@@ -27,6 +27,7 @@
     <logger name="models" level="TRACE"/>
     <logger name="modules" level="TRACE"/>
     <logger name="utils" level="TRACE"/>
+    <logger name="tests" level="TRACE"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>

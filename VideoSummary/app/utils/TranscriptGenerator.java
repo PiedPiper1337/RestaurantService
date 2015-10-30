@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class TranscriptGenerator {
     private static final org.slf4j.Logger logger = Logger.of(TranscriptGenerator.class).underlying();
 
-    private static final int TIMEOUT = 3;
+    private static final int TIMEOUT = 10;
 
     @Inject
     private static WebDriver browser;
@@ -54,7 +54,7 @@ public class TranscriptGenerator {
         logger.debug("Loaded url: {}, and clicked more button", url);
 
         int counter = 0;
-        while (transcriptButton == null && counter < 5) {
+        while (transcriptButton == null && counter < 10) {
             try {
                 transcriptButton = new WebDriverWait(browser, 1).until(ExpectedConditions.elementToBeClickable(By.className("action-panel-trigger-transcript")));
             } catch (Exception e) {
@@ -64,12 +64,13 @@ public class TranscriptGenerator {
                 counter++;
             }
         }
-        if (counter == 5) {
+        if (counter == 10) {
             return null;
         }
 
         //click and wait for transcript to load
         try {
+            Thread.sleep(1000);
             transcriptButton.click();
             transcriptContainer = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.visibilityOfElementLocated(By.id("transcript-scrollbox")));
             logger.debug("transcript successfully loaded");
