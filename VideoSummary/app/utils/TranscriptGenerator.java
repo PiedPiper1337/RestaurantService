@@ -88,7 +88,13 @@ public class TranscriptGenerator {
             long finishTime = System.currentTimeMillis();
             logger.debug("time taken: {}", (finishTime - startTime) * 1.0 / 1000);
             //before returning, we should reset browser
-            browser.get("http://www.blankwebsite.com/");
+
+            //if you're on a dev machine redirect to localhost 9000, otherwise 80
+            if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
+                browser.get("http://localhost:9000/blank");
+            } else {
+                browser.get("http://localhost/blank");
+            }
             return toReturn.toString();
 
         } catch (Exception e) {

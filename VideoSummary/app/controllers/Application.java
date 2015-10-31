@@ -34,6 +34,10 @@ public class Application extends Controller {
         return badRequest("This page does not exist.");
     }
 
+    public Result blank() {
+        return ok();
+    }
+
 
     /**
      * takes a http request with v parameter
