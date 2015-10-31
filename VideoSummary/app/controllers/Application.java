@@ -11,7 +11,7 @@ import play.mvc.With;
 import utils.Constants;
 import utils.Pipeline;
 import utils.StringManip;
-import utils.Summarizer.Summary;
+//import utils.Summarizer.Summary;
 import utils.TranscriptGenerator;
 import views.html.video;
 
@@ -101,7 +101,8 @@ public class Application extends Controller {
             return redirect("/");
         }
         String transcript = TranscriptGenerator.getTranscript(videoId);
-        Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
-        return ok(summary.toString()); //Currently returns all
+//        Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
+//        return ok(summary.toString()); //Currently returns all
+        return ok();
     }
 }
