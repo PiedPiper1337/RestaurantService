@@ -1,6 +1,7 @@
 package utils;
 
 import com.google.inject.Inject;
+import models.YoutubeVideo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,14 +21,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class TranscriptGenerator {
     private static final org.slf4j.Logger logger = Logger.of(TranscriptGenerator.class).underlying();
-
     private static final int TIMEOUT = 10;
 
     @Inject
     private static WebDriver browser;
 
-    public static String getTranscriptFromVideoID(String videoId) {
-        return getTranscriptFromFullURL(StringManip.generateUrlFromVideoId(videoId));
+    private static String downloadTranscriptFromVideoID(String videoId) {
+        return downloadTranscriptFromFullURL(StringManip.generateUrlFromVideoId(videoId));
     }
 
     /**
@@ -36,7 +36,7 @@ public class TranscriptGenerator {
      * @param url
      * @return
      */
-    public static String getTranscriptFromFullURL(String url) {
+    private static String downloadTranscriptFromFullURL(String url) {
         long startTime = System.currentTimeMillis();
         browser.manage().timeouts().implicitlyWait(TIMEOUT, TimeUnit.SECONDS);
         WebElement moreButton = null;
@@ -96,11 +96,35 @@ public class TranscriptGenerator {
                 browser.get("http://localhost/blank");
             }
             return toReturn.toString();
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
 
+    /**
+     * will get the transcript, and perform appropriate lookups and saves in the database
+     * @param inputString the videoID or the full url of the video
+     * @return  the transcript in the form of a string
+     */
+    public static String getTranscript(String inputString) {
+        String videoId = StringManip.isFullUrl(inputString) ? StringManip.getVideoId(inputString) : inputString;
+        String transcript;
+        YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
+        if (youtubeVideo == null) {
+            logger.debug("video hasn't been seen before");
+            transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            youtubeVideo = new YoutubeVideo(videoId, transcript);
+            youtubeVideo.save();
+        } else if (youtubeVideo.getTranscript() == null) {
+            logger.debug("filling in nonexistent transcript");
+            transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            youtubeVideo.setTranscript(transcript);
+            youtubeVideo.save();
+        } else {
+            logger.debug("using database transcript");
+            transcript = youtubeVideo.getTranscript();
+        }
+        return transcript;
     }
 }

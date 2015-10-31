@@ -1,34 +1,43 @@
 package utils.Summarizer;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class Range implements Comparable<Range> {
+    //starting time string
     public String startTime;
-    public String endTime;
+
+    //public String endTime;
+
+    //integer start time
+    public int startTimeSeconds;
+
+    //public int endTimeSeconds;
+
+    //the words said during this TimeRegion
     public String contents;
-    public HashMap<String, Double> counts = new HashMap<>();
+
+    //the localTF values
+    public HashMap<String, Double> localTF = new HashMap<>();
+
+    public double[] tfIdfVector;
     public double importance = 0;
     public double groupImportance = 0;
     int indexLocation;
 
-    public Range(String startTime,String endTime , String contents, int indexLocation) {
+    public Range(String startTime, String contents, int counter) {
         this.startTime = startTime;
-        this.endTime = endTime;
-        this.contents = contents;
-        this.indexLocation = indexLocation;
-    }
+        String[] timeArray = this.startTime.split(":");
+        startTimeSeconds = Integer.valueOf(timeArray[0]) * 60 + Integer.valueOf(timeArray[1]);
 
-    public Range(String startTime, String contents, int indexLocation) {
-        this.startTime = startTime;
+//        this.endTime = endTime;
+//        timeArray = this.endTime.split(":");
+//        this.endTimeSeconds = Integer.valueOf(timeArray[0]) * 60 + Integer.valueOf(timeArray[1]);
+
+
         this.contents = contents;
-        this.indexLocation = indexLocation;
-    }
-    public String toString() {
-        return startTime + " --> " + endTime + "\n"
-                + contents + "\n";
+        indexLocation = counter;
     }
 
     public int compareTo(Range o) {
-        return Double.compare(this.groupImportance,  o.groupImportance);
+        return Double.compare(this.groupImportance, o.groupImportance);
     }
 }

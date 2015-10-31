@@ -75,25 +75,7 @@ public class Application extends Controller {
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
         }
-
-        String videoId = StringManip.isFullUrl(vParameter) ? StringManip.getVideoId(vParameter) : vParameter;
-        String transcript;
-        YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
-        if (youtubeVideo == null) {
-            logger.debug("video hasn't been seen before");
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
-            youtubeVideo = new YoutubeVideo(videoId, transcript);
-            youtubeVideo.save();
-        } else if (youtubeVideo.getTranscript() == null) {
-            logger.debug("filling in nonexistent transcript");
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
-            youtubeVideo.setTranscript(transcript);
-            youtubeVideo.save();
-        } else {
-            logger.debug("using database transcript");
-            transcript = youtubeVideo.getTranscript();
-        }
-
+        String transcript = TranscriptGenerator.getTranscript(vParameter);
         return ok(transcript);
     }
 
@@ -101,7 +83,6 @@ public class Application extends Controller {
 
         Graph<Object, Object> testGraph = new SimpleGraph<>(DefaultEdge.class);
         logger.debug("Yay I made a graph to fulfill A5 requirements!");
-
         return ok("Here you go..");
     }
 
@@ -113,23 +94,13 @@ public class Application extends Controller {
     }
 
     public Result summarize() {
-        logger.debug("Summarization");
+        logger.trace("Summarization");
         String videoId = request().getQueryString("s");
-
-        //Transcript
         if (videoId == null) {
-            logger.debug("video query was null, redirecting to index");
-//            return redirect(controllers.routes.Application.index());
+            logger.debug("summarization parameter query was null, redirecting to index");
             return redirect("/");
         }
-
-        String transcript;
-        if (StringManip.isFullUrl(videoId)) {
-            transcript = TranscriptGenerator.getTranscriptFromFullURL(videoId);
-        } else {
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
-        }
-
+        String transcript = TranscriptGenerator.getTranscript(videoId);
         Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
         return ok(summary.toString()); //Currently returns all
     }
