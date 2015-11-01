@@ -36,7 +36,10 @@ public class TranscriptGenerator {
      * attempts to get a string representation of the transcript from a youtube url
      *
      * @param url
-     * @return
+     * @return transcript string formatted so that each 2 lines follows this pattern:
+     * the start time --- end time
+     * captions said during this time
+     * captions do not have any newlines within them
      */
     private static String downloadTranscriptFromFullURL(String url) {
         long startTime = System.currentTimeMillis();
@@ -112,7 +115,8 @@ public class TranscriptGenerator {
                     String segmentStartTime = time;
                     time = keyIterator.next();
                     String segmentEndTime = time;
-                    toReturn.append(segmentStartTime).append(Constants.TIME_REGION_DELIMITER).append(segmentEndTime).append('\n').append(timeToText.get(segmentStartTime)).append('\n');
+                    String contents = timeToText.get(segmentStartTime).replaceAll("\n", " ");
+                    toReturn.append(segmentStartTime).append(Constants.TIME_REGION_DELIMITER).append(segmentEndTime).append('\n').append(contents).append('\n');
                 } else {
                     time = keyIterator.next();
                 }
@@ -120,7 +124,8 @@ public class TranscriptGenerator {
 
             //do last time
             if (!timeToText.get(time).isEmpty()) { //if the current string isn't empty
-                toReturn.append(time).append(Constants.TIME_REGION_DELIMITER).append(videoEndTime).append('\n').append(timeToText.get(time));
+                String contents = timeToText.get(time).replaceAll("\n", " ");
+                toReturn.append(time).append(Constants.TIME_REGION_DELIMITER).append(videoEndTime).append('\n').append(contents);
             }
 
 
@@ -155,12 +160,20 @@ public class TranscriptGenerator {
         if (youtubeVideo == null) {
             logger.debug("video hasn't been seen before");
             transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            if (transcript == null) {
+                logger.error("critical error trying to get transcript for video: {}", videoId);
+                return null;
+            }
             youtubeVideo = new YoutubeVideo(videoId, transcript);
             youtubeVideo.save();
             logger.debug("video transcript saved in database");
         } else if (youtubeVideo.getTranscript() == null) {
             logger.debug("filling in nonexistent transcript");
             transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            if (transcript == null) {
+                logger.error("critical error trying to get transcript for video: {}", videoId);
+                return null;
+            }
             youtubeVideo.setTranscript(transcript);
             youtubeVideo.save();
             logger.debug("video transcript saved in database");

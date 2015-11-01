@@ -183,7 +183,7 @@ public class StopWords
 		words.add("yourself");
 		words.add("yourselves");
 	}
-	
+
 	public boolean isStopWord(String a)
 	{
 		return words.contains(a);

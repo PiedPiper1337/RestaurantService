@@ -1,311 +1,213 @@
-//package utils.Summarizer;
-//
-//import java.io.File;
-//import java.util.*;
-//
-///**
-// * Created by victorkwak
-// */
-//public class Summary {
-//    //histogram represents list of all timestamped regions of the video
-//    private ArrayList<Range> histogram = new ArrayList<>();
-//
-//    //list of stopwords that are not counted
-//    private StopWords stop = new StopWords();
-//
-//    //takes input as stemmed string, returs the unstemmed string
-//    private HashMap<String, String> stemmedToUnstemmed = new HashMap<>();
-//
-//    //proportion of highest tf-idf words that are considered as "important" to increment score
-//    private double topWords;
-//    private Weight weightType;
-//    private double cutOffValue;
-//
-//    //list of all words, sorted by their global tf-idf weight in increasing order
-//    private ArrayList<StringData> sortedTFIDF = new ArrayList<>();
-//    private ArrayList<StringData> sortedTF = new ArrayList<>();
-//
-//    //list of all words - used to identify the word for each index of the TFIDF vector
-//    private ArrayList<String> wordOrdering = new ArrayList<>();
-//
-//
-//    public Summary(File input,
-//                   double percentageOfTopwords,
-//                   double percentageOfVideo,
-//                   int lookAhead,
-//                   double cutOffValue,
-//                   Weight weightType) throws Exception {
-//
-//        //creates the histogram of ranges
-//        initializeHistogram(input);
-//
-//
-//        //perform preprocessing and dictionary creation
-//        clean();
-//        //now, tf, df, tfIdf, and stemmedToUnstemmed are finalized
-//
-//        createSorted();
-//
-//        //topwords reflects the proportion of the highest tf-idf value words which will be deemed "important"
-//        this.topWords = percentageOfTopwords;
-//        this.weightType = weightType;
-//        this.cutOffValue = cutOffValue;
-//
-//        SummationSummary();
-//
-//    }
-//
-//
-//    public void setTopWords(double topWords) {
-//        this.topWords = topWords;
-//    }
-//
-//    public void setWeightType(Weight weightType) {
-//        this.weightType = weightType;
-//    }
-//
-//
-//    private void initializeHistogram(File input) throws Exception {
-//        Scanner reader = new Scanner(input);
-//        String decider = reader.nextLine();
-//        reader = new Scanner(input);
-//        int counter = 0;
-//        if (decider.matches("^[0-9]*:[0-9]*$")) {
-//            while (reader.hasNextLine()) {
-//                String time = reader.nextLine();
-//                String contents = reader.nextLine();
-//                if (time.matches("^[0-9]:.*$")) {
-//                    time = "0" + time;
-//                }
-//                histogram.add(new Range(time, contents, counter++));
-//            }
+package utils.Summarizer;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
+/**
+ * Created by brianzhao && victorkwak
+ */
+public class Summary {
+    //histogram represents list of all timestamped regions of the video
+    private Transcript transcript;
+
+    //list of stopwords that are not counted
+    //TODO make this injected??
+    private static StopWords stop = new StopWords();
+
+    //takes input as stemmed string, returs the unstemmed string
+    private HashMap<String, String> stemmedToUnstemmed = new HashMap<>();
+
+    //proportion of highest tf-idf words that are considered as "important" to increment score
+    private double topWords;
+    private Weight weightType;
+    private double cutOffValue;
+
+    //list of all words, sorted by their global tf-idf weight in increasing order
+    private ArrayList<StringData> sortedTFIDF = new ArrayList<>();
+    private ArrayList<StringData> sortedTF = new ArrayList<>();
+
+    //list of all words - used to identify the word for each index of the TFIDF vector
+    private ArrayList<String> wordOrdering = new ArrayList<>();
+
+
+    public Summary(String input,
+                   double percentageOfTopwords,
+                   double percentageOfVideo,
+                   double cutOffValue,
+                   Weight weightType) throws Exception {
+
+        //creates the histogram of ranges
+        transcript = new Transcript(input);
+
+        //calculates all tf, df, tfidf, and local tf frequencies
+        transcript.analyzeWordCount();
+
+        FrequencySortable sortable = transcript.getSortableStringData();
+
+
+
+
+        //topwords reflects the proportion of the highest tf-idf value words which will be deemed "important"
+        this.topWords = percentageOfTopwords;
+        this.weightType = weightType;
+        this.cutOffValue = cutOffValue;
+
+        SummationSummary();
+
+    }
+
+
+
+
+
+    private void createSorted() {
+        for (String z : tfIdf.keySet()) {
+            sortedTFIDF.add(new StringData(z, tfIdf.get(z)));
+            sortedTF.add(new StringData(z, tf.get(z)));
+            wordOrdering.add(z);
+        }
+        Collections.sort(sortedTFIDF);
+        Collections.sort(sortedTF);
+        createDocumentTFIDFVectors();
+    }
+
+    private void createDocumentTFIDFVectors() {
+        int vectorLength = wordOrdering.size();
+        for (TimeRegion timeRegion : histogram) {
+            timeRegion.tfIdfVector = new double[vectorLength];
+            for (int i = 0; i < vectorLength; i++) {
+                String currentString = wordOrdering.get(i);
+                if (!timeRegion.localTF.containsKey(currentString)) {
+                    timeRegion.tfIdfVector[i] = 0;
+                } else {
+                    timeRegion.tfIdfVector[i] = (1 + Math.log10(timeRegion.localTF.get(currentString))) * (Math.log10(histogram.size() / df.get(currentString)));
+                }
+            }
+        }
+        normalizeDocumentTFIDFVectors();
+    }
+
+    private void normalizeDocumentTFIDFVectors() {
+        //NORMALIZATION!!!!!!
+        for (TimeRegion timeRegion : histogram) {
+            double sum = 0;
+            for (double a : timeRegion.tfIdfVector) {
+                sum += a * a;
+            }
+            sum = Math.sqrt(sum + 1);
+            for (int i = 0; i < timeRegion.tfIdfVector.length; i++) {
+                timeRegion.tfIdfVector[i] = timeRegion.tfIdfVector[i] / sum;
+            }
+        }
+    }
+
+    private void SummationSummary() {
+
+        ArrayList<StringData> orderToBeConsidered = new ArrayList<>();
+        if (weightType == Weight.TF) {
+            orderToBeConsidered = sortedTF;
+        } else if (weightType == Weight.TFIDF) {
+            orderToBeConsidered = sortedTFIDF;
+        }
+
+        //iterate through the timeregions of the histogram
+        for (TimeRegion timeRegion : histogram) {
+            //for the topMost words in the arraylist sorted, i.e. the top percentage of the tf-idf weighted words
+            for (int j = (int) ((1 - topWords) * orderToBeConsidered.size()); j < orderToBeConsidered.size(); j++) {
+                String currentWord = orderToBeConsidered.get(j).word;
+                //if the current timeRegion localTF field contains this word, increment the timeRegion's importance by the global tf-idf weight of the word
+                if (timeRegion.localTF.containsKey(currentWord)) {
+                    double termImportance = 0;
+                    if (weightType == Weight.TF) {
+                        termImportance = tf.get(currentWord);
+                    } else if (weightType == Weight.TFIDF) {
+                        termImportance = tfIdf.get(currentWord);
+                    }
+                    timeRegion.importance += termImportance;
+                }
+            }
+        }
+
+        //this is what our histogram looks like
+//        for (TimeRegion range : histogram) {
+//            System.out.println(range.importance);
+//            System.out.println(range.captionString);
 //        }
-//        //if video is over an hour , this will not work
-//        else {
-//            while (reader.hasNextLine()) {
-//                String[] divisions = reader.nextLine().split(":");
-//                String time = divisions[0] + ":" + divisions[1].substring(0, 2);
-//                if (time.matches("^[0-9]:.*$")) {
-//                    time = "0" + time;
-//                }
-//                String contents = divisions[1].substring(2, divisions[1].length());
-//                for (int i = 2; i < divisions.length; i++)
-//                    contents += " " + divisions[i];
-//                histogram.add(new Range(time, contents, counter++));
-//            }
+
+        ArrayList<TimeRegion> newHistogram = new ArrayList<>(histogram);
+        Collections.sort(newHistogram, new Comparator<TimeRegion>() {
+            @Override
+            public int compare(TimeRegion o1, TimeRegion o2) {
+                return Double.compare(o1.importance, o2.importance);
+            }
+        });
+//        System.out.println("\n\n\nRESTARTING");
+//        for (TimeRegion range : newHistogram) {
+//            System.out.println(range.importance);
+//            System.out.println(range.captionString);
 //        }
-//    }
-//
-//    private void clean() {
-//        for (Range range : histogram) {
-//            //if (current.contents.matches("^[A-Z]*:.*"))
-//            //convert all words to lowercase and remove any punctuation
-//            String[] words = range.contents.toLowerCase().replaceAll("[^\\w ]", "").split("\\s+");
-//
-//            //holder corresponds to the field "localTF" for each range object in the histogram
-//            HashMap<String, Double> holder = new HashMap<>();
-//            for (String currentWord : words) {
-//                //skip the word if it is a stopword
-//                if (stop.isStopWord(currentWord)) {
-//                    continue;
-//                }
-//
-//                //stem the current word
-//                String toAdd = stemWord(currentWord);
-//
-//                //if the stemmed word isn't inside the hashmap, add it w/a frequency of 1
-//                if (!holder.containsKey(toAdd)) {
-//                    holder.put(toAdd, 1.0);
-//                    //increment the word's associated document frequency as well, since this is the first time
-//                    //the word has occurred in this timeregion
-//                    if (!df.containsKey(toAdd)) {
-//                        df.put(toAdd, 1.0);
-//                        stemmedToUnstemmed.put(toAdd, currentWord);
-//                    } else {
-//                        df.put(toAdd, df.get(toAdd) + 1);
-//                    }
-//                }
-//                //otherwise , increment the value in the holder hashmap
-//                else {
-//                    holder.put(toAdd, holder.get(toAdd) + 1);
-//                }
-//
-//                //increment the global tf frequency associated with this word
-//                if (!tf.containsKey(toAdd))
-//                    tf.put(toAdd, 1.0);
-//                else
-//                    tf.put(toAdd, tf.get(toAdd) + 1);
-//            }
-//            holder.remove("");
-//            range.localTF = holder;
-//        }
-//        tf.remove("");
-//        df.remove("");
-//
-//        //compute all tf-idf weightings for words, and store them in hashmap tfIdf
-//        for (String s : tf.keySet()) {
-//            tfIdf.put(s, computeTf_Idf(s));
-//        }
-//
-//    }
-//
-//    private double computeTf_Idf(String t) {
-//        double tf = 1 + Math.log10(this.tf.get(t)); //log normalized tf
-//        double idf = Math.log10(histogram.size() / df.get(t)); //inverse freq
-//        return tf * idf;
-//    }
-//
-//    private void createSorted() {
-//        for (String z : tfIdf.keySet()) {
-//            sortedTFIDF.add(new StringData(z, tfIdf.get(z)));
-//            sortedTF.add(new StringData(z, tf.get(z)));
-//            wordOrdering.add(z);
-//        }
-//        Collections.sort(sortedTFIDF);
-//        Collections.sort(sortedTF);
-//        createDocumentTFIDFVectors();
-//    }
-//
-//    private void createDocumentTFIDFVectors() {
-//        int vectorLength = wordOrdering.size();
-//        for (Range range : histogram) {
-//            range.tfIdfVector = new double[vectorLength];
-//            for (int i = 0; i < vectorLength; i++) {
-//                String currentString = wordOrdering.get(i);
-//                if (!range.localTF.containsKey(currentString)) {
-//                    range.tfIdfVector[i] = 0;
-//                } else {
-//                    range.tfIdfVector[i] = (1 + Math.log10(range.localTF.get(currentString))) * (Math.log10(histogram.size() / df.get(currentString)));
-//                }
-//            }
-//        }
-//        normalizeDocumentTFIDFVectors();
-//    }
-//
-//    private void normalizeDocumentTFIDFVectors() {
-//        //NORMALIZATION!!!!!!
-//        for (Range range : histogram) {
-//            double sum = 0;
-//            for (double a : range.tfIdfVector) {
-//                sum += a * a;
-//            }
-//            sum = Math.sqrt(sum + 1);
-//            for (int i = 0; i < range.tfIdfVector.length; i++) {
-//                range.tfIdfVector[i] = range.tfIdfVector[i] / sum;
-//            }
-//        }
-//    }
-//
-//    private void SummationSummary() {
-//
-//        ArrayList<StringData> orderToBeConsidered = new ArrayList<>();
-//        if (weightType == Weight.TF) {
-//            orderToBeConsidered = sortedTF;
-//        } else if (weightType == Weight.TFIDF) {
-//            orderToBeConsidered = sortedTFIDF;
-//        }
-//
-//        //iterate through the timeregions of the histogram
-//        for (Range range : histogram) {
-//            //for the topMost words in the arraylist sorted, i.e. the top percentage of the tf-idf weighted words
-//            for (int j = (int) ((1 - topWords) * orderToBeConsidered.size()); j < orderToBeConsidered.size(); j++) {
-//                String currentWord = orderToBeConsidered.get(j).word;
-//                //if the current range localTF field contains this word, increment the range's importance by the global tf-idf weight of the word
-//                if (range.localTF.containsKey(currentWord)) {
-//                    double termImportance = 0;
-//                    if (weightType == Weight.TF) {
-//                        termImportance = tf.get(currentWord);
-//                    } else if (weightType == Weight.TFIDF) {
-//                        termImportance = tfIdf.get(currentWord);
-//                    }
-//                    range.importance += termImportance;
-//                }
-//            }
-//        }
-//
-//        //this is what our histogram looks like
-////        for (Range range : histogram) {
-////            System.out.println(range.importance);
-////            System.out.println(range.contents);
-////        }
-//
-//        ArrayList<Range> newHistogram = new ArrayList<>(histogram);
-//        Collections.sort(newHistogram, new Comparator<Range>() {
-//            @Override
-//            public int compare(Range o1, Range o2) {
-//                return Double.compare(o1.importance, o2.importance);
-//            }
-//        });
-////        System.out.println("\n\n\nRESTARTING");
-////        for (Range range : newHistogram) {
-////            System.out.println(range.importance);
-////            System.out.println(range.contents);
-////        }
-//        this.cutOffValue = newHistogram.get(newHistogram.size() / 2).importance;
-//
-//        ArrayList<Group> condensedRegions = createGroups();
-//        Collections.sort(condensedRegions);
-//        System.out.println("Number of Groups: " + condensedRegions.size());
-//
-//        for (Group group1 : condensedRegions) {
-//            System.out.println(group1.get(0).startTime + " - " + group1.get(group1.size() - 1).startTime);
-//            group1.print();
-//            System.out.println();
-//        }
-//
-//        System.out.println("Sorted TFIDF values of all words in transcript: ");
-//        //to see sorted Tf-IDF Values
-//        for (int i = 0; i < sortedTFIDF.size(); i++) {
-//            System.out.println(stemmedToUnstemmed.get(sortedTFIDF.get(i).word) + "\t\t" + sortedTFIDF.get(i).count);
-//        }
-//
-//        System.out.println("\n\n\n");
-//
-//        System.out.println("Sorted TFIDF values of all words in transcript: ");
-//        //to see sorted TF-values
-//        for (int i = 0; i < sortedTF.size(); i++) {
-//            System.out.println(stemmedToUnstemmed.get(sortedTF.get(i).word) + "\t\t" + sortedTF.get(i).count);
-//        }
-//
-//    }
-//
-//    public String stemWord(String inputString) {
-//        Stemmer s = new Stemmer();
-//        char[] word = inputString.toCharArray();
-//        s.add(word, word.length);
-//        s.stem();
-//        return s.toString();
-//    }
-//
-//    private ArrayList<Group> createGroups() {
-//        boolean inWord = false;
-//        ArrayList<Group> groups = new ArrayList<>();
-//        Group group = null;
-//        int histogramSize = histogram.size();
-//        for (int i = 0; i < histogramSize; i++) {
-//            Range range = histogram.get(i);
-//            //if the importance is greater than the cutOffValue,
-//            if (range.importance > cutOffValue) {
-//                if (!inWord) {
-//                    inWord = true;
-//                    group = new Group();
-//                    group.add(range);
-//                } else {
-//                    group.add(range);
-//                }
-//                if (i == histogramSize - 1) {
-//                    inWord = false;
-//                    groups.add(group);
-//                }
-//            } else {
-//                if (inWord) {
-//                    inWord = false;
-//                    groups.add(group);
-//                }
-//            }
-//        }
-//        return groups;
-//    }
-//
-//
-//}
+        this.cutOffValue = newHistogram.get(newHistogram.size() / 2).importance;
+
+        ArrayList<Group> condensedRegions = createGroups();
+        Collections.sort(condensedRegions);
+        System.out.println("Number of Groups: " + condensedRegions.size());
+
+        for (Group group1 : condensedRegions) {
+            System.out.println(group1.get(0).startTime + " - " + group1.get(group1.size() - 1).startTime);
+            group1.print();
+            System.out.println();
+        }
+
+        System.out.println("Sorted TFIDF values of all words in transcript: ");
+        //to see sorted Tf-IDF Values
+        for (int i = 0; i < sortedTFIDF.size(); i++) {
+            System.out.println(stemmedToUnstemmed.get(sortedTFIDF.get(i).word) + "\t\t" + sortedTFIDF.get(i).count);
+        }
+
+        System.out.println("\n\n\n");
+
+        System.out.println("Sorted TFIDF values of all words in transcript: ");
+        //to see sorted TF-values
+        for (int i = 0; i < sortedTF.size(); i++) {
+            System.out.println(stemmedToUnstemmed.get(sortedTF.get(i).word) + "\t\t" + sortedTF.get(i).count);
+        }
+
+    }
+
+    private ArrayList<Group> createGroups() {
+        boolean inWord = false;
+        ArrayList<Group> groups = new ArrayList<>();
+        Group group = null;
+        int histogramSize = histogram.size();
+        for (int i = 0; i < histogramSize; i++) {
+            TimeRegion timeRegion = histogram.get(i);
+            //if the importance is greater than the cutOffValue,
+            if (timeRegion.importance > cutOffValue) {
+                if (!inWord) {
+                    inWord = true;
+                    group = new Group();
+                    group.add(timeRegion);
+                } else {
+                    group.add(timeRegion);
+                }
+                if (i == histogramSize - 1) {
+                    inWord = false;
+                    groups.add(group);
+                }
+            } else {
+                if (inWord) {
+                    inWord = false;
+                    groups.add(group);
+                }
+            }
+        }
+        return groups;
+    }
+
+
+}

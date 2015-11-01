@@ -1,13 +1,11 @@
 package utils.Summarizer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by brianzhao on 10/31/15.
  */
-public class AllStringData {
+public class AllStringData implements FrequencySortable{
     private HashMap<String, StringData> stringDataHashMap = new HashMap<>();
 
     /**
@@ -26,6 +24,42 @@ public class AllStringData {
     public boolean containsString(String input) {
         return stringDataHashMap.containsKey(input);
     }
+
+    public double getTF(String inputString) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to getTF of non existing string");
+        }
+        return stringDataHashMap.get(inputString).getTf();
+    }
+
+    public double getDF(String inputString) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to getDf of non existing string");
+        }
+        return stringDataHashMap.get(inputString).getDf();
+    }
+
+    public double getTfIdF(String inputString) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to getTfIdf of non existing string");
+        }
+        return stringDataHashMap.get(inputString).getTfIdf();
+    }
+
+    public String getUnstemmedVersion(String inputString) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to lookup non existing string");
+        }
+        return stringDataHashMap.get(inputString).getUnstemmedWord();
+    }
+
+    public void setUnstemmedVersion(String inputString, String unstemmedInputString) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to lookup non existing string");
+        }
+        stringDataHashMap.get(inputString).setUnstemmedWord(unstemmedInputString);
+    }
+
 
     public void updateTF(String inputString, double tf) {
         if (!containsString(inputString)) {
@@ -71,4 +105,15 @@ public class AllStringData {
         Collections.sort(stringDatas, Collections.reverseOrder(StringDataComparators.tfIdfCompare));
         return stringDatas;
     }
+
+    public void removeEmptyString() {
+        if (stringDataHashMap.containsKey("")) {
+            stringDataHashMap.remove("");
+        }
+    }
+
+    public Set<String> allContainedStrings() {
+        return stringDataHashMap.keySet();
+    }
+
 }

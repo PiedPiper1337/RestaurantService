@@ -3,6 +3,7 @@ package utils.Summarizer;
 
 public class StringData {
     private String word;
+    private String unstemmedWord;
     private double tf = 0;
     private double df = 0;
     private double tfIdf = 0;
@@ -38,6 +39,15 @@ public class StringData {
     public String getWord() {
         return word;
     }
+
+    public String getUnstemmedWord() {
+        return unstemmedWord;
+    }
+
+    public void setUnstemmedWord(String unstemmedWord) {
+        this.unstemmedWord = unstemmedWord;
+    }
+
 
     @Override
     public boolean equals(Object o) {

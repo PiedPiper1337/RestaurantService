@@ -12,6 +12,7 @@ import utils.Constants;
 import utils.Pipeline;
 import utils.StringManip;
 //import utils.Summarizer.Summary;
+import utils.Summarizer.Transcript;
 import utils.TranscriptGenerator;
 import views.html.video;
 
@@ -76,6 +77,9 @@ public class Application extends Controller {
             return redirect("/");
         }
         String transcript = TranscriptGenerator.getTranscript(vParameter);
+        if (transcript == null) {
+            return internalServerError("Sorry but we had an error processing your video");
+        }
         return ok(transcript);
     }
 
@@ -101,6 +105,9 @@ public class Application extends Controller {
             return redirect("/");
         }
         String transcript = TranscriptGenerator.getTranscript(videoId);
+        if (transcript == null) {
+            return internalServerError("Sorry but we had an error processing your video");
+        }
 //        Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
 //        return ok(summary.toString()); //Currently returns all
         return ok();
