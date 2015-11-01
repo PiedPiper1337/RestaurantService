@@ -143,7 +143,7 @@ public class Summary {
         if (transcript.isImportanceValuesSet()) {
             ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
             Collections.sort(timeRegions,TimeRegionComparators.importanceComparator);
-            return timeRegions.get(timeRegions.size() / 2).getImportance();
+            return timeRegions.get((int)(timeRegions.size() * 0.15)).getImportance();
         } else {
             throw new RuntimeException("Importance Values of Transcript TimeRegions not set");
         }
