@@ -17,6 +17,9 @@ public class Transcript {
     private String entireTranscript;
     private AllStringData allStringData = new AllStringData();
     private static StopWords stopWords = new StopWords();
+    private double durationOfVideo;
+    private boolean analyzedYet = false;
+    private boolean importanceValuesSet = false;
 
     public Transcript(String entireTranscript) {
         this.entireTranscript = entireTranscript;
@@ -58,6 +61,7 @@ public class Transcript {
             if (counter % 2 != 0) {
                 throw new RuntimeException("Number of lines was not even. Means bufferedreader didn't get everything! Or there's an extra newline");
             }
+            this.durationOfVideo = toReturn.get(toReturn.size() - 1).getEndTimeSeconds();
             return toReturn;
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,6 +75,7 @@ public class Transcript {
      * will also set each timeregion's localTF count
      */
     public void analyzeWordCount() {
+        analyzedYet = true;
         for (TimeRegion timeRegion : timeRegions) {
             //convert all words to lowercase and remove any punctuation
             String[] words = timeRegion.getCaptionString().toLowerCase().replaceAll("[^\\w ]", "").split("\\s+");
@@ -97,7 +102,7 @@ public class Transcript {
                         allStringData.updateDF(currentWordStemmed, 1.0);
                         allStringData.setUnstemmedVersion(currentWordStemmed, currentWord);
                     } else {
-                        allStringData.updateDF(currentWordStemmed, allStringData.getDF(currentWordStemmed));
+                        allStringData.updateDF(currentWordStemmed, allStringData.getDF(currentWordStemmed) + 1);
                     }
                 }
                 //otherwise , increment the value in the holder hashmap
@@ -123,6 +128,10 @@ public class Transcript {
         }
     }
 
+    public boolean isAnalyzedYet() {
+        return analyzedYet;
+    }
+
     public ArrayList<TimeRegion> getTimeRegions() {
         return timeRegions;
     }
@@ -130,14 +139,19 @@ public class Transcript {
     private double computeTf_Idf(String t) {
         double logNormalizedTf = 1 + Math.log10(allStringData.getTF(t)); //log normalized tf
         double inverseDf = Math.log10(timeRegions.size() / allStringData.getDF(t)); //inverse freq
-        return logNormalizedTf*inverseDf;
+        return logNormalizedTf * inverseDf;
+    }
+
+    public double getDurationOfVideo() {
+        return durationOfVideo;
     }
 
     /**
      * be sure to not modify any of the string data contained within here.
+     *
      * @return
      */
-    public FrequencySortable getSortableStringData() {
+    public AllStringData getAllStringData() {
         return allStringData;
     }
 
@@ -148,6 +162,15 @@ public class Transcript {
         s.stem();
         return s.toString();
     }
+
+    public boolean isImportanceValuesSet() {
+        return importanceValuesSet;
+    }
+
+    public void setImportanceValuesSet(boolean importanceValuesSet) {
+        this.importanceValuesSet = importanceValuesSet;
+    }
+
 
     @Override
     public String toString() {

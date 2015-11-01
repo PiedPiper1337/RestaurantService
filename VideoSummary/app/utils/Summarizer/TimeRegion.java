@@ -11,6 +11,7 @@ public class TimeRegion  {
 
     private int startTimeSeconds;
     private int endTimeSeconds;
+    private int duration;
 
     //the words said during this TimeRegion
     private String captionString;
@@ -27,6 +28,7 @@ public class TimeRegion  {
         this.endTime = endTime;
         this.startTimeSeconds = calculateSeconds(startTime);
         this.endTimeSeconds = calculateSeconds(endTime);
+        this.duration = endTimeSeconds - startTimeSeconds;
         this.captionString = captionString;
     }
 
@@ -110,6 +112,10 @@ public class TimeRegion  {
             currentUnit *= 60;
         }
         return secondsCount;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     @Override

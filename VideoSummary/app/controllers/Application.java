@@ -12,9 +12,18 @@ import utils.Constants;
 import utils.Pipeline;
 import utils.StringManip;
 //import utils.Summarizer.Summary;
+import utils.Summarizer.Group;
+import utils.Summarizer.Summary;
 import utils.Summarizer.Transcript;
+import utils.Summarizer.Weight;
 import utils.TranscriptGenerator;
 import views.html.video;
+
+import java.util.ArrayList;
+
+/**
+ * HOW TO DEBUG USING PLAY FRAMEWORK + INTELLIJ: https://www.playframework.com/documentation/2.4.x/IDE
+ */
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
@@ -108,8 +117,12 @@ public class Application extends Controller {
         if (transcript == null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
-//        Summary summary = new Summary(transcript, 0.25, 0.25, 0, 2);
+
+        Summary summary = new Summary(transcript);
+//        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
+        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
+
 //        return ok(summary.toString()); //Currently returns all
-        return ok();
+        return ok(summaryGroups.toString());
     }
 }

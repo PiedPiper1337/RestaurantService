@@ -1,43 +1,77 @@
-//package utils.Summarizer;
-//
-//import java.util.ArrayList;
-//
-///**
-// * Brian Zhao && Victor Kwak
-// * 5/3/15
-// */
-//public class Group implements Comparable<Group> {
-//    private ArrayList<TimeRegion> group = new ArrayList<>();
-//    private double totalImportance = 0;
-//
-//    public void add(TimeRegion timeRegion) {
-//        totalImportance += timeRegion.importance;
-//        group.add(timeRegion);
-//    }
-//
-//    public TimeRegion get(int i) {
-//        return group.get(i);
-//    }
-//
-//    public int size() {
-//        return group.size();
-//    }
-//
-//    //sort will sort from greatest to least
-//    @Override
-//    public int compareTo(Group o) {
-//        return Double.compare((o.totalImportance / o.group.size()) , (this.totalImportance / this.group.size()));
-//    }
-//
-//    public int groupLength() {
-//        String[] startTime = group.get(0).startTime.split(":");
-//        String[] endTime = group.get(group.size() - 1).startTime.split(":");
-//        return Integer.parseInt(endTime[0]) - Integer.parseInt(startTime[0]);
-//    }
-//
-//    public void print() {
-//        for (TimeRegion timeRegion : group) {
-//            System.out.println(timeRegion.captionString);
-//        }
-//    }
-//}
+package utils.Summarizer;
+
+import java.util.ArrayList;
+
+/**
+ * Brian Zhao && Victor Kwak
+ * 5/3/15
+ */
+public class Group {
+    private ArrayList<TimeRegion> group = new ArrayList<>();
+    private double totalImportance = 0;
+    private double totalDuration = 0;
+
+    private String startTime;
+    private String endTime;
+
+    private int startTimeSeconds;
+    private int endTimeSeconds;
+
+    public void add(TimeRegion timeRegion, boolean timeRegionImportanceIsDividedByDurationAlready) {
+        if (timeRegionImportanceIsDividedByDurationAlready) {
+            totalImportance += timeRegion.getImportance() * timeRegion.getDuration();
+        } else {
+            totalImportance += timeRegion.getImportance();
+        }
+        totalDuration += timeRegion.getDuration();
+        endTime = timeRegion.getEndTime();
+        endTimeSeconds = TimeRegion.calculateSeconds(endTime);
+        group.add(timeRegion);
+        if (size() == 1) {
+            startTime = group.get(0).getStartTime();
+            startTimeSeconds = TimeRegion.calculateSeconds(startTime);
+        }
+    }
+
+    public TimeRegion get(int i) {
+        return group.get(i);
+    }
+
+    public int size() {
+        return group.size();
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder toReturn = new StringBuilder();
+        for (TimeRegion timeRegion : group) {
+            toReturn.append(timeRegion.toString()).append('\n');
+        }
+        return toReturn.toString();
+    }
+
+    public double getTotalDuration() {
+        return totalDuration;
+    }
+
+    public double getTotalImportance() {
+        return totalImportance;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public int getEndTimeSeconds() {
+        return endTimeSeconds;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public int getStartTimeSeconds() {
+        return startTimeSeconds;
+    }
+}

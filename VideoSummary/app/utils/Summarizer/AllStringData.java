@@ -1,16 +1,20 @@
 package utils.Summarizer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by brianzhao on 10/31/15.
  */
-public class AllStringData implements FrequencySortable{
+public class AllStringData {
     private HashMap<String, StringData> stringDataHashMap = new HashMap<>();
 
     /**
      * you should only add strings that do not already exist
      * will throw a runtime exception if you attempt to add an already existing string
+     *
      * @param input
      * @return
      */
@@ -114,6 +118,19 @@ public class AllStringData implements FrequencySortable{
 
     public Set<String> allContainedStrings() {
         return stringDataHashMap.keySet();
+    }
+
+    public double getWeight(String inputString, Weight weightType) {
+        if (!containsString(inputString)) {
+            throw new RuntimeException("Attempted to lookup non existing string");
+        }
+        if (weightType == Weight.TF) {
+            return stringDataHashMap.get(inputString).getTf();
+        } else if (weightType == Weight.TFIDF) {
+            return stringDataHashMap.get(inputString).getTfIdf();
+        } else {
+            throw new RuntimeException("unsupported weighttype");
+        }
     }
 
 }
