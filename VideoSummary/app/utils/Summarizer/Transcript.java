@@ -12,6 +12,9 @@ import java.util.HashMap;
 /**
  * Created by brianzhao on 10/31/15.
  */
+
+//TODO determine if transcript has punctuation over 2% of character count, then create timeregions out of sentences, instead of caption timestamps
+
 public class Transcript {
     private ArrayList<TimeRegion> timeRegions;
     private String entireTranscript;

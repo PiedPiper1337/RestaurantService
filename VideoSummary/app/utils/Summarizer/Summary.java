@@ -33,8 +33,8 @@ public class Summary {
         //calculates all tf, df, tfidf, and local tf frequencies
         transcript.analyzeWordCount();
 
-        //TODO return the wordcount after analyzing, the tf or tfidf
-        //TODO return histogram data
+        //TODO method to return the wordcount after analyzing, the tf or tfidf
+        //TODO method to return histogram data (importance for each timeregion)
     }
 
     public ArrayList<Group> generateSummary(Double percentageOfTopwords,
