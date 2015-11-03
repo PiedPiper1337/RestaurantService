@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
+import utils.GlobalState;
 import utils.TranscriptGenerator;
 
 /**
@@ -16,20 +17,41 @@ public class InitializerModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        //figures out what current OS is and stores it in global state
+        logger.debug("Determining operating system...");
+        determineOS();
+
+        //figures out what type of chromedriver to use based on os and sets the environment variable for it
+        logger.debug("Setting chrome driver environment variable...");
+        determineChromeDriver();
+
+        requestStaticInjection(TranscriptGenerator.class);
+        bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
+    }
+
+    private void determineOS() {
         String osName = System.getProperty("os.name").toLowerCase();
         logger.debug("Detected operating system: {}", osName);
         if (osName.startsWith("mac")) {
-            System.setProperty("webdriver.chrome.driver", "chromedriverMac");
+            GlobalState.operatingSystem = GlobalState.OS.Mac;
         } else if (osName.startsWith("window")) {
+            GlobalState.operatingSystem = GlobalState.OS.Windows;
+        } else {
+            GlobalState.operatingSystem = GlobalState.OS.Linux;
+        }
+    }
+
+    private void determineChromeDriver() {
+        if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
+            System.setProperty("webdriver.chrome.driver", "chromedriverMac");
+        } else if (GlobalState.operatingSystem == GlobalState.OS.Windows) {
             //do nothing for now
         } else {
             System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
         }
-
         logger.debug("chromedriver environment path set");
-        requestStaticInjection(TranscriptGenerator.class);
-        bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
     }
+
 }
 
 

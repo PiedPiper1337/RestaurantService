@@ -1,6 +1,5 @@
 package controllers;
 
-import models.YoutubeVideo;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -8,10 +7,20 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.Constants;
+import utils.Pipeline;
 import utils.StringManip;
+import utils.Summarizer.Group;
+import utils.Summarizer.Summary;
 import utils.TranscriptGenerator;
 import views.html.video;
+
+import java.util.ArrayList;
+
+//import utils.Summarizer.Summary;
+
+/**
+ * HOW TO DEBUG USING PLAY FRAMEWORK + INTELLIJ: https://www.playframework.com/documentation/2.4.x/IDE
+ */
 
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
@@ -32,6 +41,10 @@ public class Application extends Controller {
     public Result genericFailure(String badResource) {
         logger.trace("bad url attempt at {}", badResource);
         return badRequest("This page does not exist.");
+    }
+
+    public Result blank() {
+        return ok();
     }
 
 
@@ -69,34 +82,42 @@ public class Application extends Controller {
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
         }
-
-        String videoId = StringManip.isFullUrl(vParameter) ? StringManip.getVideoId(vParameter) : vParameter;
-        String transcript;
-        YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
-        if (youtubeVideo == null) {
-            logger.debug("video hasn't been seen before");
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
-            youtubeVideo = new YoutubeVideo(videoId, transcript);
-            youtubeVideo.save();
-        } else if (youtubeVideo.getTranscript() == null) {
-            logger.debug("filling in nonexistent transcript");
-            transcript = TranscriptGenerator.getTranscriptFromVideoID(videoId);
-            youtubeVideo.setTranscript(transcript);
-            youtubeVideo.save();
-        } else {
-            logger.debug("using database transcript");
-            transcript = youtubeVideo.getTranscript();
+        String transcript = TranscriptGenerator.getTranscript(vParameter);
+        if (transcript == null) {
+            return internalServerError("Sorry but we had an error processing your video");
         }
-
         return ok(transcript);
     }
 
     public Result getSummarization() {
 
-        Graph<Object, Object> testGraph = new SimpleGraph<Object, Object>(DefaultEdge.class);
+        Graph<Object, Object> testGraph = new SimpleGraph<>(DefaultEdge.class);
         logger.debug("Yay I made a graph to fulfill A5 requirements!");
-
         return ok("Here you go..");
     }
 
+    public Result runNLP() throws Exception {
+        logger.debug("Processing aScandalInBohemia");
+        String title = "NLPData/aScandalInBohemia";
+        String analyzed = Pipeline.pos(title);
+        return ok(analyzed);
+    }
+
+    public Result summarize() {
+        logger.trace("Summarization");
+        String videoId = request().getQueryString("s");
+        if (videoId == null) {
+            logger.debug("summarization parameter query was null, redirecting to index");
+            return redirect("/");
+        }
+        String transcript = TranscriptGenerator.getTranscript(videoId);
+        if (transcript == null) {
+            return internalServerError("Sorry but we had an error processing your video");
+        }
+
+        Summary summary = new Summary(transcript);
+//        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
+        ArrayList<Group> summaryGroups = summary.generateSummary();
+        return ok(summaryGroups.toString());
+    }
 }

@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   "com.github.detro" % "phantomjsdriver" % "1.2.0",
   "org.jgrapht" % "jgrapht-core" % "0.9.1",
   "mysql" % "mysql-connector-java" % "5.1.35",
+  "org.apache.commons" % "commons-lang3" % "3.4",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.opennlp-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.languagetool-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.maltparser-asl" % "1.7.0",

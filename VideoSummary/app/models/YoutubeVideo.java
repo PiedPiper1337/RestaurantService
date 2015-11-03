@@ -16,9 +16,8 @@ public class YoutubeVideo extends Model {
     public Long id;
 
     @Constraints.Required
-    @Column
+    @Column(columnDefinition = "VARCHAR(30)")
     public String videoId;
-
 
     @Column(columnDefinition = "LONGTEXT")
     public String transcript;
