@@ -36,6 +36,9 @@ public class Summary {
         //TODO method to return the wordcount after analyzing, the tf or tfidf
         //TODO method to return histogram data (importance for each timeregion)
     }
+    public ArrayList<Group> generateSummary() {
+        return this.generateSummary(null, null, null, null, null);
+    }
 
     public ArrayList<Group> generateSummary(Double percentageOfTopwords,
                                             Double percentageOfVideo,
