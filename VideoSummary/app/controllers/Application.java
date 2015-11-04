@@ -1,20 +1,24 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import play.Logger;
+import play.cache.CacheApi;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.Pipeline;
-import utils.StringManip;
+import utils.*;
 import utils.Summarizer.Group;
 import utils.Summarizer.Summary;
-import utils.TranscriptGenerator;
 import views.html.video;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 //import utils.Summarizer.Summary;
 
@@ -25,6 +29,8 @@ import java.util.ArrayList;
 public class Application extends Controller {
     private static final org.slf4j.Logger logger = Logger.of(Application.class).underlying();
 
+    @Inject
+    CacheApi cache;
 
     @With(IPAction.class)
     public Result index() {
@@ -45,6 +51,23 @@ public class Application extends Controller {
 
     public Result blank() {
         return ok();
+    }
+
+    public Result summaryTimes() {
+        JsonNode requestBodyParams = request().body().asJson();
+        JsonNode videoIdNode = requestBodyParams.get("v");
+        String videoId = videoIdNode.asText();
+
+        String result = cache.get(videoId);
+        if (result == null) {
+            ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+            if (summaryGroups == null) {
+                return internalServerError("Sorry but we had an error trying to process your video");
+            } else {
+                result = Json.toJson(summaryGroups).toString();
+            }
+        }
+        return ok(result);
     }
 
 
@@ -105,19 +128,18 @@ public class Application extends Controller {
 
     public Result summarize() {
         logger.trace("Summarization");
-        String videoId = request().getQueryString("s");
+        String videoId = request().getQueryString("v");
         if (videoId == null) {
             logger.debug("summarization parameter query was null, redirecting to index");
             return redirect("/");
         }
-        String transcript = TranscriptGenerator.getTranscript(videoId);
-        if (transcript == null) {
+
+        ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+        if (summaryGroups== null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
-
-        Summary summary = new Summary(transcript);
-//        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
-        ArrayList<Group> summaryGroups = summary.generateSummary();
+        cache.set(videoId, Json.toJson(summaryGroups).toString(), Constants.CACHE_TIME);
         return ok(summaryGroups.toString());
     }
+
 }

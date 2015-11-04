@@ -1,31 +1,36 @@
 package utils;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.protocol.HTTP;
+import play.Logger;
+
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by brianzhao on 10/13/15.
  */
 public class StringManip {
+    private static final org.slf4j.Logger logger = Logger.of(StringManip.class).underlying();
     public static String extractParameter(String url, String key) {
-        String[] entireUrlString = url.split("\\?");
-        if (entireUrlString.length != 2) {
-            throw new RuntimeException();
+        try {
+            List<NameValuePair> results = URLEncodedUtils.parse(new URL(url).toURI(), HTTP.UTF_8);
+            for (NameValuePair nameValuePair : results) {
+                if (nameValuePair.getName().equalsIgnoreCase(key)) {
+                    logger.debug(nameValuePair.getValue());
+                    return nameValuePair.getValue();
+                }
+            }
+            logger.error("key: {} in url: {} not found", key, url);
+            return null;
+        } catch (Exception e) {
+            logger.error("exception with url {}" , url);
+            e.printStackTrace();
+            return null;
         }
-        String params = entireUrlString[1];
-        String[] keyValue = params.split("=");
-        if (keyValue.length % 2 != 0) {
-            throw new RuntimeException();
-        }
-        HashMap<String, String> keyValueMap = new HashMap<>();
-
-        for (int i = 0; i < keyValue.length; i += 2) {
-            keyValueMap.put(keyValue[i], keyValue[i + 1]);
-        }
-        String toReturn = keyValueMap.get(key);
-        if (toReturn == null) {
-            throw new RuntimeException();
-        }
-        return toReturn;
     }
 
     /**
