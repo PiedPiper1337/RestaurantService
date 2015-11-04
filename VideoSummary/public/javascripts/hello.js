@@ -8,6 +8,9 @@ var testSlices = [
 ];
  */
 
+var gCurrentTime = 0; // Horrible global state for now
+var gTimerid;
+
 /**
  * The player object that allows us to interact with the iframe
  * */
@@ -33,10 +36,13 @@ function onPlayerReady(event) {
 }
 
 var done = false;
+
 /**
  * Function that is executed when the state of the player changes
  * */
 function onPlayerStateChange(event) {
+    console.log("State changed!");
+    console.log("To: " + event.data.toString());
     if (event.data == YT.PlayerState.PLAYING && !done) {
         //setTimeout(stopVideo, 6000);
         done = true;
@@ -48,21 +54,27 @@ function stopVideo() {
 }
 
 /**
- * Execute this to start playing all the sections in the testSlices array
+ * Function to poll the video periodically, getting the updated progress of the video
+ * Don't run this directly
  * */
-function playSlices(arr) {
-    console.log("testSlices has " + arr.length);
+function checkCurrentTime(timeSlices) {
+    console.log(player.getCurrentTime());
 
-    if (arr.length > 0) {
-        player.pauseVideo();
-        player.seekTo(arr[0].start);
-        player.playVideo();
-        setTimeout(function () {
-            playSlices(arr);
-        }, (arr[0].end - arr[0].start) * 1000);
-        arr.splice(0, 1);
-    } else {
-        player.stopVideo();
+    if (timeSlices.length == 0) {
+        clearInterval(gTimerid);
+        return;
+    }
+
+    if (player.getPlayerState() == YT.PlayerState.PLAYING && player.getCurrentTime() > timeSlices[0].end) {
+        timeSlices.splice(0, 1);
+
+        if (timeSlices.length > 0) {
+            player.pauseVideo();
+            player.seekTo(timeSlices[0].start);
+            player.playVideo();
+        } else {
+            player.stopVideo()
+        }
     }
 }
 
@@ -74,7 +86,13 @@ document.addEventListener("DOMContentLoaded", function () {
             {start: 35, end: 45}
         ];
 
-        playSlices(testSlices);
+        if (testSlices.length > 0) {
+            player.pauseVideo();
+            player.seekTo(testSlices[0].start);
+            player.playVideo();
+        }
+
+        gTimerid = setInterval(checkCurrentTime, 500, testSlices);
     });
     // Put anything you want to happen when the page is finished loading
 }, false);
