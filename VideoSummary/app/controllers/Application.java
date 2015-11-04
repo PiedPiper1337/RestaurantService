@@ -1,6 +1,5 @@
 package controllers;
 
-import models.YoutubeVideo;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -8,18 +7,16 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.Constants;
 import utils.Pipeline;
 import utils.StringManip;
-//import utils.Summarizer.Summary;
 import utils.Summarizer.Group;
 import utils.Summarizer.Summary;
-import utils.Summarizer.Transcript;
-import utils.Summarizer.Weight;
 import utils.TranscriptGenerator;
 import views.html.video;
 
 import java.util.ArrayList;
+
+//import utils.Summarizer.Summary;
 
 /**
  * HOW TO DEBUG USING PLAY FRAMEWORK + INTELLIJ: https://www.playframework.com/documentation/2.4.x/IDE
@@ -99,7 +96,7 @@ public class Application extends Controller {
         return ok("Here you go..");
     }
 
-    public Result runNLP() throws Exception{
+    public Result runNLP() throws Exception {
         logger.debug("Processing aScandalInBohemia");
         String title = "NLPData/aScandalInBohemia";
         String analyzed = Pipeline.pos(title);
@@ -120,9 +117,7 @@ public class Application extends Controller {
 
         Summary summary = new Summary(transcript);
 //        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
-        ArrayList<Group> summaryGroups = summary.generateSummary(null, null, null, null, null);
-
-//        return ok(summary.toString()); //Currently returns all
+        ArrayList<Group> summaryGroups = summary.generateSummary();
         return ok(summaryGroups.toString());
     }
 }

@@ -65,7 +65,7 @@ public class TranscriptGenerator {
         }
 
         int counter = 0;
-        while (transcriptButton == null && counter < 10) {
+        while (transcriptButton == null && counter < 15) {
             try {
                 transcriptButton = new WebDriverWait(browser, 1).until(ExpectedConditions.elementToBeClickable(By.className("action-panel-trigger-transcript")));
             } catch (Exception e) {
@@ -75,7 +75,7 @@ public class TranscriptGenerator {
                 counter++;
             }
         }
-        if (counter == 10) {
+        if (counter == 15) {
             return null;
         }
 

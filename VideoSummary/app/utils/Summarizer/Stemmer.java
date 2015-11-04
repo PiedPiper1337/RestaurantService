@@ -47,7 +47,7 @@ import java.io.IOException;
  * by calling one of the various stem(something) methods.
  */
 
-class Stemmer {
+public class Stemmer {
     private static final int INC = 50;
     private char[] b;
     private int i,     /* offset into b */
