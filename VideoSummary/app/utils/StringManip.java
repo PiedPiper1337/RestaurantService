@@ -11,6 +11,7 @@ public class StringManip {
         if (entireUrlString.length != 2) {
             throw new RuntimeException();
         }
+        // FIXME: First split on '&' and then split on '='
         String params = entireUrlString[1];
         String[] keyValue = params.split("=");
         if (keyValue.length % 2 != 0) {
