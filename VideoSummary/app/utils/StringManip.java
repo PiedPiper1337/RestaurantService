@@ -1,5 +1,7 @@
 package utils;
 
+import play.Logger;
+
 import java.util.HashMap;
 
 /**
@@ -8,20 +10,16 @@ import java.util.HashMap;
 public class StringManip {
     public static String extractParameter(String url, String key) {
         String[] entireUrlString = url.split("\\?");
-        if (entireUrlString.length != 2) {
-            throw new RuntimeException();
-        }
-        // FIXME: First split on '&' and then split on '='
         String params = entireUrlString[1];
-        String[] keyValue = params.split("=");
-        if (keyValue.length % 2 != 0) {
-            throw new RuntimeException();
-        }
+        String[] keyValue = params.split("&");
+
         HashMap<String, String> keyValueMap = new HashMap<>();
 
-        for (int i = 0; i < keyValue.length; i += 2) {
-            keyValueMap.put(keyValue[i], keyValue[i + 1]);
+        for (int i = 0; i < keyValue.length; i++) {
+            String[] k = keyValue[i].split("=");
+            keyValueMap.put(k[0], k[1]);
         }
+
         String toReturn = keyValueMap.get(key);
         if (toReturn == null) {
             throw new RuntimeException();

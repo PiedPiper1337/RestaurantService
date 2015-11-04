@@ -8,7 +8,7 @@ html, body {
 }
 
 #search-container {
-    width: 50%;
+    width: 60%;
     text-align: center;
 
     position: relative;
@@ -24,7 +24,7 @@ html, body {
 }
 
 #youtube-url-textbox {
-    width: 536px;
+    width: 600px;
     margin: 0 auto;
     display: inline-block;
 }
@@ -35,6 +35,6 @@ html, body {
 }
 
 #inner-container {
-    display: inline-block;
     margin: 0 auto;
+    display: inline-block;
 }
