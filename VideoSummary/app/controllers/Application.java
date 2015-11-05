@@ -53,11 +53,7 @@ public class Application extends Controller {
         return ok();
     }
 
-    public Result summaryTimes() {
-        JsonNode requestBodyParams = request().body().asJson();
-        JsonNode videoIdNode = requestBodyParams.get("v");
-        String videoId = videoIdNode.asText();
-
+    public Result summaryTimes(String videoId) {
         String result = cache.get(videoId);
         if (result == null) {
             ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
@@ -65,6 +61,7 @@ public class Application extends Controller {
                 return internalServerError("Sorry but we had an error trying to process your video");
             } else {
                 result = Json.toJson(summaryGroups).toString();
+                cache.set(videoId, result, Constants.CACHE_TIME);
             }
         }
         return ok(result);
