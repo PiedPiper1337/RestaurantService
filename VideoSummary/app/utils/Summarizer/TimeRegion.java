@@ -21,7 +21,6 @@ public class TimeRegion  {
 
     private double[] tfIdfVector;
     private double importance = 0;
-    private double groupImportance = 0;
 
     public TimeRegion(String startTime, String endTime, String captionString) {
         this.startTime = startTime;
@@ -54,14 +53,6 @@ public class TimeRegion  {
 
     public void setEndTimeSeconds(int endTimeSeconds) {
         this.endTimeSeconds = endTimeSeconds;
-    }
-
-    public double getGroupImportance() {
-        return groupImportance;
-    }
-
-    public void setGroupImportance(double groupImportance) {
-        this.groupImportance = groupImportance;
     }
 
     public double getImportance() {

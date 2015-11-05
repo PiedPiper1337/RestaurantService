@@ -23,5 +23,6 @@ public class Constants {
     public static final double DEFAULT_SUMMARY_DURATION_SECONDS = 180;
     public static final double DEFAULT_SUMMARY_PROPORTION = 0.25;
     public static final boolean DEFAULT_NORMALIZE_ON_DURATION = false;
+    public static final double DEFAULT_CUTOFF = 0.15;
 
 }
