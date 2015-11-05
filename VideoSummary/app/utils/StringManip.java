@@ -1,7 +1,5 @@
 package utils;
 
-import play.Logger;
-
 import java.util.HashMap;
 
 /**
@@ -12,7 +10,6 @@ public class StringManip {
         String[] entireUrlString = url.split("\\?");
         String params = entireUrlString[1];
         String[] keyValue = params.split("&");
-
         HashMap<String, String> keyValueMap = new HashMap<>();
 
         for (int i = 0; i < keyValue.length; i++) {
@@ -20,10 +17,16 @@ public class StringManip {
             keyValueMap.put(k[0], k[1]);
         }
 
+        if (!keyValueMap.containsKey(key)) {
+            throw new RuntimeException(); // We couldn't extract what we were looking for
+        }
+
         String toReturn = keyValueMap.get(key);
+
         if (toReturn == null) {
             throw new RuntimeException();
         }
+
         return toReturn;
     }
 
