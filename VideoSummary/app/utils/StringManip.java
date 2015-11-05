@@ -1,11 +1,20 @@
 package utils;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.protocol.HTTP;
+import play.Logger;
+
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by brianzhao on 10/13/15.
  */
 public class StringManip {
+    private static final org.slf4j.Logger logger = Logger.of(StringManip.class).underlying();
     public static String extractParameter(String url, String key) {
         String[] entireUrlString = url.split("\\?");
         String params = entireUrlString[1];
