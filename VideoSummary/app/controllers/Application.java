@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -13,14 +12,10 @@ import play.mvc.Result;
 import play.mvc.With;
 import utils.*;
 import utils.Summarizer.Group;
-import utils.Summarizer.Summary;
 import views.html.video;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
-//import utils.Summarizer.Summary;
 
 /**
  * HOW TO DEBUG USING PLAY FRAMEWORK + INTELLIJ: https://www.playframework.com/documentation/2.4.x/IDE
@@ -132,7 +127,7 @@ public class Application extends Controller {
         }
 
         ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
-        if (summaryGroups== null) {
+        if (summaryGroups == null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
         cache.set(videoId, Json.toJson(summaryGroups).toString(), Constants.CACHE_TIME);

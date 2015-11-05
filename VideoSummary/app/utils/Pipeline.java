@@ -22,7 +22,7 @@ import static org.apache.uima.fit.pipeline.SimplePipeline.runPipeline;
  */
 public class Pipeline {
 
-    public static String pos(String file) throws Exception{
+    public static String pos(String file) throws Exception {
         runPipeline(
                 createReaderDescription(TextReader.class,
                         TextReader.PARAM_SOURCE_LOCATION, file,
