@@ -1,14 +1,8 @@
 package utils;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.protocol.HTTP;
 import play.Logger;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by brianzhao on 10/13/15.

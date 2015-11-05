@@ -52,6 +52,7 @@ public class Application extends Controller {
         String result = cache.get(videoId);
         if (result == null) {
             ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+            logger.debug("got a POST");
             if (summaryGroups == null) {
                 return internalServerError("Sorry but we had an error trying to process your video");
             } else {
@@ -61,7 +62,6 @@ public class Application extends Controller {
         }
         return ok(result);
     }
-
 
     /**
      * takes a http request with v parameter

@@ -1,12 +1,3 @@
-/**
- * Three test sections of the video to play
- *
-var testSlices = [
-    {start: 4, end: 10},
-    {start: 12, end: 19},
-    {start: 35, end: 45}
-];
- */
 
 var gCurrentTime = 0; // Horrible global state for now
 var gTimerid;
@@ -35,17 +26,18 @@ function onPlayerReady(event) {
     //playSlices(testSlices);
 }
 
-var done = false;
-
 /**
  * Function that is executed when the state of the player changes
  * */
 function onPlayerStateChange(event) {
     console.log("State changed!");
     console.log("To: " + event.data.toString());
-    if (event.data == YT.PlayerState.PLAYING && !done) {
-        //setTimeout(stopVideo, 6000);
-        done = true;
+    if (event.data == YT.PlayerState.ENDED) {
+        clearInterval(gTimerid);
+        $("#summarize-status").text("Stopped summarization playback!");
+        setTimeout(function() {
+            $("#summarize-status").text("");
+        }, 1500);
     }
 }
 
@@ -58,19 +50,20 @@ function stopVideo() {
  * Don't run this directly
  * */
 function checkCurrentTime(timeSlices) {
-    console.log(player.getCurrentTime());
+    console.log(player.getCurrentTime() + "waiting for " + timeSlices[0].endTimeSeconds);
 
     if (timeSlices.length == 0) {
         clearInterval(gTimerid);
         return;
     }
 
-    if (player.getPlayerState() == YT.PlayerState.PLAYING && player.getCurrentTime() > timeSlices[0].end) {
+    if (player.getPlayerState() == YT.PlayerState.PLAYING && player.getCurrentTime() > timeSlices[0].endTimeSeconds) {
         timeSlices.splice(0, 1);
 
         if (timeSlices.length > 0) {
             player.pauseVideo();
-            player.seekTo(timeSlices[0].start);
+            player.seekTo(timeSlices[0].startTimeSeconds);
+            console.log("Seeking to " + timeSlices[0].startTimeSeconds)
             player.playVideo();
         } else {
             player.stopVideo()
@@ -80,19 +73,24 @@ function checkCurrentTime(timeSlices) {
 
 document.addEventListener("DOMContentLoaded", function () {
     $("#summarizeButton").on('click', function() {
-        var testSlices = [
-            {start: 4, end: 10},
-            {start: 12, end: 19},
-            {start: 35, end: 45}
-        ];
 
-        if (testSlices.length > 0) {
-            player.pauseVideo();
-            player.seekTo(testSlices[0].start);
-            player.playVideo();
-        }
+        var apiRequest = $.post("/times/" + window.vvv, function(data) {
+            alert("success " + data);
+            var slices = JSON.parse(data); // Expecting an array back! (It should probably get changed to a object though) TODO
+            $("#summarize-status").text("Retrieved summary, playing...");
+            if (slices.length > 0) {
+                player.pauseVideo();
+                player.seekTo(slices[0].startTimeSeconds);
+                console.log("Initially seeking to " + slices[0].startTimeSeconds);
+                player.playVideo();
+            }
+            console.log("starting the timer with this array: " + typeof(slices));
+            gTimerid = setInterval(checkCurrentTime, 500, slices);
+        });
 
-        gTimerid = setInterval(checkCurrentTime, 500, testSlices);
+        apiRequest.fail(function(data) {
+            $("#summarize-status").text("Response from server was a failure " + data);
+        });
     });
     // Put anything you want to happen when the page is finished loading
 }, false);
