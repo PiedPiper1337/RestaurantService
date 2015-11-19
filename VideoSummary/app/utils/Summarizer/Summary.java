@@ -3,10 +3,7 @@ package utils.Summarizer;
 import play.Logger;
 import utils.Constants;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by brianzhao && victorkwak
@@ -23,7 +20,7 @@ public class Summary {
     private Boolean normalizeOnDuration;
 
     //list of all words - used to identify the word for each index of the TFIDF vector
-    private ArrayList<String> wordOrdering = new ArrayList<>();
+    private List<String> wordOrdering = new ArrayList<>();
 
 
     public Summary(String input) {
@@ -36,11 +33,11 @@ public class Summary {
         //TODO method to return the wordcount after analyzing, the tf or tfidf
         //TODO method to return histogram data (importance for each timeregion)
     }
-    public ArrayList<Group> generateSummary() {
+    public List<Group> generateSummary() {
         return this.generateSummary(null, null, null, null, null);
     }
 
-    public ArrayList<Group> generateSummary(Double percentageOfTopwords,
+    public List<Group> generateSummary(Double percentageOfTopwords,
                                             Double percentageOfVideo,
                                             Double cutOffValue,
                                             Weight weightType,
@@ -73,15 +70,15 @@ public class Summary {
         return generateSummary(this.transcript, this.cutOffValue, this.normalizeOnDuration);
     }
 
-    private ArrayList<Group> generateSummary(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
-        ArrayList<Group> groups = createGroups(transcript, cutOffValue, normalizeOnDuration);
+    private List<Group> generateSummary(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
+        List<Group> groups = createGroups(transcript, cutOffValue, normalizeOnDuration);
         Collections.sort(groups, Collections.reverseOrder(normalizeOnDuration ? GroupComparators.normalizedTotalImportance : GroupComparators.totalImportance));
 
 
         double calculatedLengthOfSummaryInSeconds = determineDurationOfSummary();
         double secondsCurrentlyInSummary = 0;
 
-        ArrayList<Group> finalSummary = new ArrayList<>();
+        List<Group> finalSummary = new ArrayList<>();
         int counter = 0;
         while (secondsCurrentlyInSummary <= calculatedLengthOfSummaryInSeconds) {
             finalSummary.add(groups.get(counter));
@@ -117,7 +114,7 @@ public class Summary {
      */
     public String histogram(Transcript transcript) {
         if (transcript.isImportanceValuesSet()) {
-            ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
+            List<TimeRegion> timeRegions = transcript.getTimeRegions();
             Collections.sort(timeRegions, TimeRegionComparators.startTimeComparator);
             StringBuilder toReturn = new StringBuilder();
             for (int i = 0; i < timeRegions.size(); i++) {
@@ -144,7 +141,7 @@ public class Summary {
      */
     public double determinePossibleImportanceValue(Transcript transcript) {
         if (transcript.isImportanceValuesSet()) {
-            ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
+            List<TimeRegion> timeRegions = transcript.getTimeRegions();
             Collections.sort(timeRegions,TimeRegionComparators.importanceComparator);
             return timeRegions.get((int)(timeRegions.size() * Constants.DEFAULT_CUTOFF)).getImportance();
         } else {
@@ -168,7 +165,7 @@ public class Summary {
             throw new RuntimeException("Bad Proportion Value passed in");
         }
         AllStringData allStringData = transcript.getAllStringData();
-        ArrayList<StringData> sortedStringData = null;
+        List<StringData> sortedStringData = null;
         if (weightType == Weight.TF) {
             sortedStringData = allStringData.sortByTfDescending();
         } else if (weightType == Weight.TFIDF) {
@@ -179,7 +176,7 @@ public class Summary {
         }
         HashSet<StringData> mostImportantWords = new HashSet<>(sortedStringData.subList(0, (int) (proportionOfWordsDeemedImportant * sortedStringData.size())));
 
-        ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
+        List<TimeRegion> timeRegions = transcript.getTimeRegions();
         for (TimeRegion currentTimeRegion : timeRegions) {
             HashMap<String, Double> currentTF = currentTimeRegion.getLocalTF();
             double calculatedImportance = 0;
@@ -210,7 +207,7 @@ public class Summary {
      * @param normalizeOnDuration
      */
     public void assignImportanceValues(Transcript transcript, Weight weightType, boolean normalizeOnDuration) {
-        ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
+        List<TimeRegion> timeRegions = transcript.getTimeRegions();
         AllStringData allStringData = transcript.getAllStringData();
         for (TimeRegion currentTimeRegion : timeRegions) {
             HashMap<String, Double> currentTF = currentTimeRegion.getLocalTF();
@@ -226,11 +223,11 @@ public class Summary {
         transcript.setImportanceValuesSet(true);
     }
 
-    private ArrayList<Group> createGroups(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
+    private List<Group> createGroups(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
         boolean inWord = false;
-        ArrayList<Group> groups = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
         Group group = null;
-        ArrayList<TimeRegion> timeRegions = transcript.getTimeRegions();
+        List<TimeRegion> timeRegions = transcript.getTimeRegions();
         Collections.sort(timeRegions, TimeRegionComparators.startTimeComparator);
         int totalNumberOfTimeRegions = timeRegions.size();
         for (int i = 0; i < totalNumberOfTimeRegions; i++) {
