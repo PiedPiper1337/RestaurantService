@@ -25,4 +25,7 @@ public class Constants {
     public static final boolean DEFAULT_NORMALIZE_ON_DURATION = false;
     public static final double DEFAULT_CUTOFF = 0.15;
 
+    //cache related constants
+    public static final int CACHE_TIME = 15 * 60; //15 minutes
+
 }
