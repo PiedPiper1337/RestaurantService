@@ -5,7 +5,8 @@
 <html lang="en">
     <head>
         <title>Video</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/video.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script type="text/javascript">
             window.vvv = "@video";
@@ -23,6 +24,8 @@
 
         <div id="footnoteDiv">
             <button id="summarizeButton" type="button">Play Summarization</button>
+            <br />
+            <span id="summarize-status"> </span>
         </div>
     </body>
 </html>

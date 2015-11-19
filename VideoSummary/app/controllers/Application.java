@@ -52,6 +52,7 @@ public class Application extends Controller {
         String result = cache.get(videoId);
         if (result == null) {
             ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+            logger.debug("got a POST");
             if (summaryGroups == null) {
                 return internalServerError("Sorry but we had an error trying to process your video");
             } else {
@@ -62,7 +63,6 @@ public class Application extends Controller {
         return ok(result);
     }
 
-
     /**
      * takes a http request with v parameter
      * checks if the url is directly inside 'v' or inside an entire url
@@ -71,7 +71,6 @@ public class Application extends Controller {
      * @return
      */
     public Result displayVideo() {
-        logger.trace("demo method called");
         String videoId = request().getQueryString("v");
         if (videoId == null) {
             logger.debug("video query was null, redirecting to index");
@@ -83,9 +82,8 @@ public class Application extends Controller {
             videoId = StringManip.extractParameter(videoId, "v");
         }
 
-        logger.debug("returning actual video string");
         String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
-        logger.debug("video url is: {}", videoURLToEmbed);
+        logger.debug("The video ID is: {}", videoURLToEmbed);
         return ok(video.render(videoURLToEmbed));
     }
 
@@ -105,7 +103,6 @@ public class Application extends Controller {
     }
 
     public Result getSummarization() {
-
         Graph<Object, Object> testGraph = new SimpleGraph<>(DefaultEdge.class);
         logger.debug("Yay I made a graph to fulfill A5 requirements!");
         return ok("Here you go..");
