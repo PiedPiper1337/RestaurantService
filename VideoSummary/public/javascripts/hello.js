@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Initially seeking to " + slices[0].startTimeSeconds);
                 player.playVideo();
             }
+
             console.log("starting the timer with this array: " + typeof(slices));
             gTimerid = setInterval(checkCurrentTime, 500, slices);
         });
