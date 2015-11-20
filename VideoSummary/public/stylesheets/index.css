@@ -34,8 +34,10 @@ html, body {
 }
 
 #logo-img {
-    width: 438px;
-    height: 100px;
+    /*width: 438px;*/
+    /*height: 100px;*/
+    width: 533px;
+    height: 200px;
     margin: 10px auto;
     display: block;
 }
