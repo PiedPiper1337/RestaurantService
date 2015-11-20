@@ -1,11 +1,4 @@
-package utils;
-
-import utils.Summarizer.Group;
-import utils.Summarizer.SimpleFrequencySummary;
-import utils.Summarizer.Summary;
-
-import java.util.ArrayList;
-import java.util.List;
+package utils.Summarizer;
 
 /**
  * Created by brianzhao on 11/3/15.
@@ -17,7 +10,7 @@ public class SummaryFactory {
      * @return
      */
     public static Summary generateBasicSummary(String videoId) {
-        String transcript = TranscriptGenerator.getTranscript(videoId);
+        Transcript transcript = TranscriptFactory.getTranscript(videoId);
         if (transcript == null) {
             return null;
         }

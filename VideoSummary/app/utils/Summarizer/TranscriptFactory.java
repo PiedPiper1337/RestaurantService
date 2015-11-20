@@ -1,4 +1,4 @@
-package utils;
+package utils.Summarizer;
 
 import com.google.inject.Inject;
 import models.YoutubeVideo;
@@ -12,6 +12,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import play.Logger;
+import utils.Constants;
+import utils.GlobalState;
+import utils.StringManip;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by brianzhao on 10/25/15.
  */
-public class TranscriptGenerator {
-    private static final org.slf4j.Logger logger = Logger.of(TranscriptGenerator.class).underlying();
+public class TranscriptFactory {
+    private static final org.slf4j.Logger logger = Logger.of(TranscriptFactory.class).underlying();
     private static final int TIMEOUT = 10;
 
     @Inject
@@ -153,13 +156,13 @@ public class TranscriptGenerator {
      * @param inputString the videoID or the full url of the video
      * @return the transcript in the form of a string
      */
-    public static String getTranscript(String inputString) {
+    public static Transcript getTranscript(String inputString) {
         String videoId = StringManip.isFullUrl(inputString) ? StringManip.getVideoId(inputString) : inputString;
         String transcript;
         YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
         if (youtubeVideo == null) {
             logger.debug("video hasn't been seen before");
-            transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            transcript = TranscriptFactory.downloadTranscriptFromVideoID(videoId);
             if (transcript == null) {
                 logger.error("critical error trying to get transcript for video: {}", videoId);
                 return null;
@@ -169,7 +172,7 @@ public class TranscriptGenerator {
             logger.debug("video transcript saved in database");
         } else if (youtubeVideo.getTranscript() == null) {
             logger.debug("filling in nonexistent transcript");
-            transcript = TranscriptGenerator.downloadTranscriptFromVideoID(videoId);
+            transcript = TranscriptFactory.downloadTranscriptFromVideoID(videoId);
             if (transcript == null) {
                 logger.error("critical error trying to get transcript for video: {}", videoId);
                 return null;
@@ -181,6 +184,6 @@ public class TranscriptGenerator {
             logger.debug("using database transcript");
             transcript = youtubeVideo.getTranscript();
         }
-        return transcript;
+        return new Transcript(transcript);
     }
 }

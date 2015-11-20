@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
 import utils.GlobalState;
-import utils.TranscriptGenerator;
+import utils.Summarizer.TranscriptFactory;
 
 /**
  * Created by brianzhao on 10/25/15.
@@ -25,7 +25,7 @@ public class InitializerModule extends AbstractModule {
         logger.debug("Setting chrome driver environment variable...");
         determineChromeDriver();
 
-        requestStaticInjection(TranscriptGenerator.class);
+        requestStaticInjection(TranscriptFactory.class);
         bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
     }
 
