@@ -5,14 +5,14 @@ package utils;
  */
 public class TemperatureSingleton {
 
-    private static TemperatureSingleton self = null;
+    private static TemperatureSingleton instance = null;
 
     public static TemperatureSingleton getInstance() {
-        if (self == null) {
-            self = new TemperatureSingleton();
+        if (instance == null) {
+            instance = new TemperatureSingleton();
         }
 
-        return self;
+        return instance;
     }
 
     private TemperatureSingleton() {
