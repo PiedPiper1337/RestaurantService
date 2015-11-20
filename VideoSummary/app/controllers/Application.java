@@ -1,9 +1,6 @@
 package controllers;
 
 import com.google.inject.Inject;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
 import play.Logger;
 import play.cache.CacheApi;
 import play.libs.Json;
@@ -14,7 +11,7 @@ import utils.*;
 import utils.Summarizer.Group;
 import views.html.video;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,7 +48,7 @@ public class Application extends Controller {
     public Result summaryTimes(String videoId) {
         String result = cache.get(videoId);
         if (result == null) {
-            ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+            List<Group> summaryGroups = SummaryFactory.generateBasicSummary(videoId).generateSummary();
             logger.debug("got a POST");
             if (summaryGroups == null) {
                 return internalServerError("Sorry but we had an error trying to process your video");
@@ -102,12 +99,6 @@ public class Application extends Controller {
         return ok(transcript);
     }
 
-    public Result getSummarization() {
-        Graph<Object, Object> testGraph = new SimpleGraph<>(DefaultEdge.class);
-        logger.debug("Yay I made a graph to fulfill A5 requirements!");
-        return ok("Here you go..");
-    }
-
     public Result runNLP() throws Exception {
         logger.debug("Processing aScandalInBohemia");
         String title = "NLPData/aScandalInBohemia";
@@ -122,8 +113,7 @@ public class Application extends Controller {
             logger.debug("summarization parameter query was null, redirecting to index");
             return redirect("/");
         }
-
-        ArrayList<Group> summaryGroups = SummaryGenerator.generate(videoId);
+        List<Group> summaryGroups = SummaryFactory.generateBasicSummary(videoId).generateSummary();
         if (summaryGroups == null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
