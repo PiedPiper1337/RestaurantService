@@ -107,6 +107,9 @@ public class Transcript {
      *       of the sentence calculated by the proportion of duration of the timeregion (based on length of characters into that
      *       captionString of the timeregion)
      *
+     *
+     * NOTE: THIS CODE WAS A PAIN TO WRITE AND WILL BE A PAIN TO UNDERSTAND!!!
+     *
      * @param allSentences
      * @param timeRegionList
      * @return
@@ -118,10 +121,21 @@ public class Transcript {
         int endIndex = startIndex;
         int stringIndexWithinCaption = 0;
 
-        /**
-         * may have to consider index position in string of currentline (captionstring)
-         */
         for (String sentence : allSentences) {
+
+            /**
+             * actually starting time for each sentence depends on how far into the timeregion
+             * you are. since a sentence can begin in the middle of the passed in timeregion
+             * I will approximate via proportion of characters into timeregion.
+             */
+            TimeRegion startTimeRegion = timeRegionList.get(startIndex);
+            int startSeconds = TimeRegion.calculateSeconds(startTimeRegion.getStartTime())
+                    + (int)
+                    (
+                            startTimeRegion.getDuration() *
+                            ( (stringIndexWithinCaption*1.0) / startTimeRegion.getCaptionString().length() )
+                    );
+
             String portionOfSentenceLeft = sentence;
             String currentTimeRegionWords = timeRegionList.get(endIndex).getCaptionString().substring(stringIndexWithinCaption).trim();
             while (portionOfSentenceLeft.contains(currentTimeRegionWords)) {
@@ -137,22 +151,30 @@ public class Transcript {
              * if: your sentence stopped perfectly at the end of a timeregion
              * else: your sentence stops in the middle of a timeregion
              */
+
             if (portionOfSentenceLeft.length() == 0) {
                 stringIndexWithinCaption = 0;
                 regionsBasedOnSentences.add(new TimeRegion(
-                        timeRegionList.get(startIndex).getStartTime(),
+                        startSeconds,
                         timeRegionList.get(endIndex-1).getEndTime(),
                         sentence
                 ));
             } else {
                 stringIndexWithinCaption = currentTimeRegionWords.indexOf(portionOfSentenceLeft) + portionOfSentenceLeft.length();
+
+                TimeRegion endTimeRegion = timeRegionList.get(endIndex);
+                int endSeconds =TimeRegion.calculateSeconds(endTimeRegion.getStartTime())
+                        + (int)
+                        (
+                                endTimeRegion.getDuration() *
+                                        ( (stringIndexWithinCaption*1.0) / endTimeRegion.getCaptionString().length() )
+                        );
                 regionsBasedOnSentences.add(new TimeRegion(
-                        timeRegionList.get(startIndex).getStartTime(),
-                        timeRegionList.get(endIndex).getEndTime(),
+                        startSeconds,
+                        endSeconds,
                         sentence
                 ));
             }
-
             startIndex = endIndex;
         }
         logger.debug("Created a transcript with timeregions based on sentences");
