@@ -15,6 +15,7 @@ public class Constants {
 
     //transcript related constants
     public static final String TIME_REGION_DELIMITER = "---";
+    public static final double proportionOfPunctuationCutoff = 0.017;
 
 
     //summary related constants

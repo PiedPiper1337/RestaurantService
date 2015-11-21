@@ -115,6 +115,6 @@ public class TimeRegion  {
                 "startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", captionString='" + captionString + '\'' +
-                '}';
+                '}' + '\n';
     }
 }
