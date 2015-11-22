@@ -160,7 +160,11 @@ public class Transcript {
                         sentence
                 ));
             } else {
-                stringIndexWithinCaption = currentTimeRegionWords.indexOf(portionOfSentenceLeft) + portionOfSentenceLeft.length();
+                if (endIndex == startIndex) {
+                    stringIndexWithinCaption = timeRegionList.get(endIndex).getCaptionString().indexOf(portionOfSentenceLeft,stringIndexWithinCaption) + portionOfSentenceLeft.length();
+                } else {
+                    stringIndexWithinCaption = currentTimeRegionWords.indexOf(portionOfSentenceLeft) + portionOfSentenceLeft.length();
+                }
 
                 TimeRegion endTimeRegion = timeRegionList.get(endIndex);
                 int endSeconds =TimeRegion.calculateSeconds(endTimeRegion.getStartTime())
