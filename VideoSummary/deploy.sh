@@ -4,5 +4,5 @@ sudo killall java
 rm -rf videosummary-1.0-SNAPSHOT
 unzip *.zip
 rm *.zip
-cd videosummary-1.0-SNAPSHOT/bin
-sudo nohup ./videosummary -Dhttp.port=80 > application.log &
+#cd videosummary-1.0-SNAPSHOT/bin
+#sudo nohup ./videosummary -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=80 > application.log &

@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -57,13 +58,17 @@ public class TranscriptFactory {
             browser.get(url);
             logger.debug("retrieved url: {}", url);
             videoEndTimeElement = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.visibilityOfElementLocated(By.className("ytp-time-duration")));
+//            videoEndTimeElement = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.presenceOfElementLocated(By.className("ytp-time-duration")));
             videoEndTime = videoEndTimeElement.getText();
             logger.debug("retrieved video end time: {}", videoEndTime);
             moreButton = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.elementToBeClickable(By.id("action-panel-overflow-button")));
-            moreButton.click();
+
+//            moreButton.click();
+            clickElement(moreButton);
             logger.debug("clicked more button");
         } catch (Exception e) {
             e.printStackTrace();
+            resetBrowser();
             return null;
         }
 
@@ -73,20 +78,24 @@ public class TranscriptFactory {
                 transcriptButton = new WebDriverWait(browser, 1).until(ExpectedConditions.elementToBeClickable(By.className("action-panel-trigger-transcript")));
             } catch (Exception e) {
                 System.out.println("caught exception");
-                moreButton.click();
+//                moreButton.click();
+                clickElement(moreButton);
                 System.out.println("clicked more button");
                 counter++;
             }
         }
         if (counter == 15) {
+            resetBrowser();
             return null;
         }
 
         //click and wait for transcript to load
         try {
             Thread.sleep(1000);
-            transcriptButton.click();
+//            transcriptButton.click();
+            clickElement(transcriptButton);
             transcriptContainer = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.visibilityOfElementLocated(By.id("transcript-scrollbox")));
+//            transcriptContainer = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.presenceOfElementLocated(By.id("transcript-scrollbox")));
             logger.debug("transcript successfully loaded");
 
             Document doc = Jsoup.parse(transcriptContainer.getAttribute("innerHTML"));
@@ -136,16 +145,13 @@ public class TranscriptFactory {
             long finishTime = System.currentTimeMillis();
             logger.debug("time taken: {}", (finishTime - startTime) * 1.0 / 1000);
             //before returning, we should reset browser
+            resetBrowser();
 
-            //if you're on a dev machine redirect to localhost 9000, otherwise 80
-            if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
-                browser.get("http://localhost:9000/blank");
-            } else {
-                browser.get("http://localhost/blank");
-            }
             return toReturn.toString();
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.toString());
+            resetBrowser();
             return null;
         }
     }
@@ -185,5 +191,30 @@ public class TranscriptFactory {
             transcript = youtubeVideo.getTranscript();
         }
         return new Transcript(transcript);
+    }
+
+    private static void resetBrowser() {
+        //if you're on a dev machine redirect to localhost 9000, otherwise 80
+        if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
+            browser.get("http://localhost:9000/blank");
+        } else {
+            browser.get("http://localhost/blank");
+        }
+    }
+
+    /**
+     * https://stackoverflow.com/questions/12035023/selenium-webdriver-cant-click-on-a-link-outside-the-page
+     * @param element
+     */
+    private static void clickElement(WebElement element) {
+        /**
+         * -150 is necessary for firefox.
+         * this is absolutely ridiculous
+         */
+        int elementPosition = element.getLocation().getY()-100;
+        String js = String.format("window.scroll(0, %s)", elementPosition);
+        logger.debug(js);
+        ((JavascriptExecutor)browser).executeScript(js);
+        element.click();
     }
 }
