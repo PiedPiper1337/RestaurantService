@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
-import utils.FirefoxDriverCustom;
 import utils.GlobalState;
 import utils.Summarizer.TranscriptFactory;
 
