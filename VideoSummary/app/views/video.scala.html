@@ -32,9 +32,15 @@
         </div>
 
         <div id="footnoteDiv">
-            <button id="summarizeButton" type="button">Play Summarization</button>
+            <button class="btn btn-primary" id="summarizeButton" type="button">Play Summarization</button>
+            <button class="btn btn-danger" id="stopButton" type="button">Stop Summarization</button>
+            <button class="btn btn-primary" id="nextButton" type="button">Next</button>
             <br />
-            <span id="summarize-status"> </span>
+
+            <span class="status-block">
+                <b>Summarization Status:</b>
+                <span id="summarize-status">Stopped </span>
+            </span>
         </div>
     </body>
 </html>

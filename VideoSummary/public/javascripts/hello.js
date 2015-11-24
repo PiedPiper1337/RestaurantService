@@ -19,6 +19,10 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
+function setSummarizationStatus(str) {
+    $("#summarize-status").text(str);
+}
+
 /**
  * Function that is executed once the iframe is ready to play
  * */
@@ -35,11 +39,16 @@ function onPlayerStateChange(event) {
     console.log("To: " + event.data.toString());
     if (event.data == YT.PlayerState.ENDED) {
         clearInterval(gTimerid);
-        $("#summarize-status").text("Stopped summarization playback!");
-        setTimeout(function() {
-            $("#summarize-status").text("");
-        }, 1500);
+        setSummarizationStatus("Stopped");
+        //$("#summarize-status").text("Stopped summarization playback!");
+        /*setTimeout(function() {
+            //$("#summarize-status").text("");
+        }, 1500);*/
     }
+}
+
+function stopSummarization() {
+    clearInterval(gTimerid);
 }
 
 function stopVideo() {
@@ -54,7 +63,8 @@ function checkCurrentTime(timeSlices) {
     console.log(player.getCurrentTime() + "waiting for " + timeSlices[0].endTimeSeconds);
 
     if (timeSlices.length == 0) {
-        clearInterval(gTimerid);
+        stopSummarization();
+        //clearInterval(gTimerid);
         return;
     }
 
@@ -74,6 +84,7 @@ function checkCurrentTime(timeSlices) {
             player.stopVideo()
             $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
             gSliceIndex = 0;
+            setSummarizationStatus("Stopped");
         }
     }
 }
@@ -85,7 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("success " + data);
             var slices = JSON.parse(data); // Expecting an array back! (It should probably get changed to a object though) TODO
             gSlices = JSON.parse(data);
-            $("#summarize-status").text("Retrieved summary, playing...");
+            setSummarizationStatus("Successfully retrieved summary, playing...");
+            //$("#summarize-status").text("Retrieved summary, playing...");
             if (slices.length > 0) {
                 $("#playlist-div").empty();
                 for (var i = 0; i < slices.length; i++) {
@@ -108,8 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         apiRequest.fail(function(data) {
-            $("#summarize-status").text("Response from server was a failure " + data);
+            setSummarizationStatus("Response from server was a failure " + data); // TODO create better error response
         });
     });
-    // Put anything you want to happen when the page is finished loading
+
+    $("#stopButton").on('click', function() {
+        stopSummarization();
+        setSummarizationStatus("Stopped");
+        stopVideo();
+    });
 }, false);
