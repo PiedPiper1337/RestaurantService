@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import play.Logger;
 import play.cache.CacheApi;
@@ -13,6 +14,7 @@ import utils.StringManip;
 import utils.Summarizer.*;
 import views.html.video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -56,7 +58,12 @@ public class Application extends Controller {
                 return internalServerError("Sorry but we had an error processing your video");
             }
             List<Group> summaryGroups = summaryResult.generateSummary();
-            result = Json.toJson(summaryGroups).toString();
+
+            ArrayList<JsonNode> jsonNodes = new ArrayList<>();
+            for (Group summary : summaryGroups) {
+                jsonNodes.add(summary.getJson());
+            }
+            result = Json.toJson(jsonNodes).toString();
             cache.set(videoId, result, Constants.CACHE_TIME);
         }
         return ok(result);
