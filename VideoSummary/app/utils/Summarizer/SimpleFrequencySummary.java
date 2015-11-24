@@ -23,9 +23,9 @@ public class SimpleFrequencySummary implements Summary{
     private List<String> wordOrdering = new ArrayList<>();
 
 
-    public SimpleFrequencySummary(String input) {
+    public SimpleFrequencySummary(Transcript input) {
         //creates the histogram of ranges
-        transcript = new Transcript(input);
+        this.transcript = input;
 
         //calculates all tf, df, tfidf, and local tf frequencies
         transcript.analyzeWordCount();
@@ -68,10 +68,10 @@ public class SimpleFrequencySummary implements Summary{
             this.cutOffValue = determinePossibleImportanceValue(this.transcript);
         }
 
-        return generateSummary(this.transcript, this.cutOffValue, this.normalizeOnDuration);
+        return createSummaryGroups(this.transcript, this.cutOffValue, this.normalizeOnDuration);
     }
 
-    private List<Group> generateSummary(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
+    private List<Group> createSummaryGroups(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
         List<Group> groups = createGroups(transcript, cutOffValue, normalizeOnDuration);
         Collections.sort(groups, Collections.reverseOrder(normalizeOnDuration ? GroupComparators.normalizedTotalImportance : GroupComparators.totalImportance));
 

@@ -4,19 +4,19 @@
 
 # Home page
 #GET        /                    @controllers.Assets.at(path="/public/html",file="index.html")
-GET        /                    @controllers.Application.index()
-GET        /watch               @controllers.Application.displayVideo()
-GET        /transcript          @controllers.Application.displayTranscript()
-GET        /nlp                 @controllers.Application.runNLP()
-GET        /summarize           @controllers.Application.summarize()
-GET        /blank               @controllers.Application.blank()
+GET         /                            @controllers.Application.index()
+GET         /watch                       @controllers.Application.displayVideo()
+GET         /transcript                  @controllers.Application.displayTranscript()
+GET         /nlp                         @controllers.Application.runNLP()
+GET         /summarize                   @controllers.Application.summarize()
+GET         /blank                       @controllers.Application.blank()
 
 #Javascript API endpoints
-POST        /times/:videoId     @controllers.Application.summaryTimes(videoId: String)
+POST        /times/:videoId              @controllers.Application.summaryTimes(videoId: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
-GET        /*badResource        @controllers.Application.genericFailure(badResource)
+GET         /assets/*file                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /*badResource                @controllers.Application.genericFailure(badResource)
 
 
 

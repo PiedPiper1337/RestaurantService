@@ -42,7 +42,7 @@ public class ControllerTest extends WithApplication {
 //                    System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
 //                }
 //                logger.debug("chromedriver environment path set");
-//                requestStaticInjection(TranscriptGenerator.class);
+//                requestStaticInjection(TranscriptFactory.class);
 //                bind(WebDriver.class).to(utils.ChromeDriverCustom.class).asEagerSingleton();
 //            }
 //        };

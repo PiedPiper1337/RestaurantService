@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
 import utils.GlobalState;
-import utils.TranscriptGenerator;
+import utils.Summarizer.TranscriptFactory;
 
 /**
  * Created by brianzhao on 10/25/15.
@@ -20,13 +20,19 @@ public class InitializerModule extends AbstractModule {
         //figures out what current OS is and stores it in global state
         logger.debug("Determining operating system...");
         determineOS();
-
-        //figures out what type of chromedriver to use based on os and sets the environment variable for it
-        logger.debug("Setting chrome driver environment variable...");
         determineChromeDriver();
+        requestStaticInjection(TranscriptFactory.class);
 
-        requestStaticInjection(TranscriptGenerator.class);
-        bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
+        /**
+         * use chromedriver for mac
+         */
+        if (GlobalState.operatingSystem == GlobalState.OS.Mac || GlobalState.operatingSystem == GlobalState.OS.Linux) {
+            //figures out what type of chromedriver to use based on os and sets the environment variable for it
+            logger.debug("Setting chrome driver environment variable...");
+            bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
+        } else {
+            throw new RuntimeException("WINDOWS NOT SUPPORTED YET");
+        }
     }
 
     private void determineOS() {
@@ -44,10 +50,10 @@ public class InitializerModule extends AbstractModule {
     private void determineChromeDriver() {
         if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
             System.setProperty("webdriver.chrome.driver", "chromedriverMac");
-        } else if (GlobalState.operatingSystem == GlobalState.OS.Windows) {
-            //do nothing for now
-        } else {
+        } else if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
             System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
+        } else {
+            throw new RuntimeException("Windows not supported yet");
         }
         logger.debug("chromedriver environment path set");
     }

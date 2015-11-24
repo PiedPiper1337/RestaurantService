@@ -7,4 +7,5 @@ import java.util.List;
  */
 public interface Summary {
     List<Group> generateSummary();
+    
 }

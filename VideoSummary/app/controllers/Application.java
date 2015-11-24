@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import play.Logger;
 import play.cache.CacheApi;
@@ -7,10 +8,13 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
-import utils.*;
-import utils.Summarizer.Group;
+import utils.Constants;
+import utils.Pipeline;
+import utils.StringManip;
+import utils.Summarizer.*;
 import views.html.video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,16 +49,21 @@ public class Application extends Controller {
     }
 
     public Result summaryTimes(String videoId) {
+        logger.debug("got a POST");
         String result = cache.get(videoId);
         if (result == null) {
-            List<Group> summaryGroups = SummaryFactory.generateBasicSummary(videoId).generateSummary();
-            logger.debug("got a POST");
-            if (summaryGroups == null) {
-                return internalServerError("Sorry but we had an error trying to process your video");
-            } else {
-                result = Json.toJson(summaryGroups).toString();
-                cache.set(videoId, result, Constants.CACHE_TIME);
+            Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
+            if (summaryResult == null) {
+                return internalServerError("Sorry but we had an error processing your video");
             }
+            List<Group> summaryGroups = summaryResult.generateSummary();
+
+            ArrayList<JsonNode> jsonNodes = new ArrayList<>();
+            for (Group summary : summaryGroups) {
+                jsonNodes.add(summary.getJson());
+            }
+            result = Json.toJson(jsonNodes).toString();
+            cache.set(videoId, result, Constants.CACHE_TIME);
         }
         return ok(result);
     }
@@ -91,11 +100,11 @@ public class Application extends Controller {
 //            return redirect(controllers.routes.Application.index());
             return redirect("/");
         }
-        String transcript = TranscriptGenerator.getTranscript(vParameter);
+        Transcript transcript = TranscriptFactory.getTranscript(vParameter);
         if (transcript == null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
-        return ok(transcript);
+        return ok(transcript.toString());
     }
 
     public Result runNLP() throws Exception {
@@ -112,10 +121,12 @@ public class Application extends Controller {
             logger.debug("summarization parameter query was null, redirecting to index");
             return redirect("/");
         }
-        List<Group> summaryGroups = SummaryFactory.generateBasicSummary(videoId).generateSummary();
-        if (summaryGroups == null) {
+        Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
+        if (summaryResult == null) {
             return internalServerError("Sorry but we had an error processing your video");
         }
+        List<Group> summaryGroups = summaryResult.generateSummary();
+
         cache.set(videoId, Json.toJson(summaryGroups).toString(), Constants.CACHE_TIME);
         return ok(summaryGroups.toString());
     }
