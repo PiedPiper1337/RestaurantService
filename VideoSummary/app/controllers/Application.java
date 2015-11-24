@@ -125,8 +125,4 @@ public class Application extends Controller {
         return ok(summaryGroups.toString());
     }
 
-    public Result testPunctuation(String videoId) {
-        return ok(TranscriptFactory.getTranscript(videoId).getTimeRegions().toString());
-    }
-
 }

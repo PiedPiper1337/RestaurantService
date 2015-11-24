@@ -9,7 +9,6 @@ GET         /watch                       @controllers.Application.displayVideo()
 GET         /transcript                  @controllers.Application.displayTranscript()
 GET         /nlp                         @controllers.Application.runNLP()
 GET         /summarize                   @controllers.Application.summarize()
-GET         /punctuation/:videoId        @controllers.Application.testPunctuation(videoId: String)
 GET         /blank                       @controllers.Application.blank()
 
 #Javascript API endpoints
