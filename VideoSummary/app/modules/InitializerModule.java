@@ -2,7 +2,6 @@ package modules;
 
 import com.google.inject.AbstractModule;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import play.Logger;
 import utils.ChromeDriverCustom;
 import utils.GlobalState;
@@ -31,13 +30,7 @@ public class InitializerModule extends AbstractModule {
             //figures out what type of chromedriver to use based on os and sets the environment variable for it
             logger.debug("Setting chrome driver environment variable...");
             bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
-        }
-
-//        else if (GlobalState.operatingSystem == GlobalState.OS.Linux){
-//            logger.debug("using firefoxdriver...");
-//            bind(WebDriver.class).to(FirefoxDriverCustom.class).asEagerSingleton();
-//        }
-        else {
+        } else {
             throw new RuntimeException("WINDOWS NOT SUPPORTED YET");
         }
     }
