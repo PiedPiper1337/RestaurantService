@@ -89,7 +89,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (slices.length > 0) {
                 $("#playlist-div").empty();
                 for (var i = 0; i < slices.length; i++) {
-                    $("#playlist-div").append('<div class="section">' + JSON.stringify(slices[i]) + '</div>');
+                    $("#playlist-div").append('<div class="section">' + i + '.) ' +
+                        slices[i].startTime + ' - ' + slices[i].endTime + '<br/>' +
+                        slices[i].wordsSpoken.substring(0, 50) +
+                        '...</div>');
                 }
 
                 $($("#playlist-div").children()[gSliceIndex]).addClass("sel"); // Highlight the current playlist index
