@@ -1,11 +1,35 @@
+.nav {
+    height: 75px;
+    width:100%;
+    border-bottom: 2px solid;
+}
+
+#nav-logo {
+    height: 75px;
+    width: 175px;
+}
+
 #videoDiv {
     width: 800px;
-    height:450px;
+    height: 450px;
     border-style: solid;
+    display: inline-block;
+    margin: 20px 0px 0px 20px;
+    float: left;
+}
+
+#playlist-div {
+    border: 2px solid;
+    width: 300px;
+    height: 450px;
+    float: right;
+    margin: 20px 20px 0 0;
 }
 
 #footnoteDiv {
-    width: 500px;
+    width: 800px;
     height: 100px;
     border-style: solid;
+    margin: 20px 0px 0px 20px;
+    float: left;
 }
