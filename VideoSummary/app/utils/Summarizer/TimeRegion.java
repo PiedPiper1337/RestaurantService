@@ -4,7 +4,7 @@ import play.Logger;
 
 import java.util.HashMap;
 
-public class TimeRegion  {
+public class TimeRegion {
     private static final org.slf4j.Logger logger = Logger.of(TimeRegion.class).underlying();
     private String startTime;
     private String endTime;
@@ -31,28 +31,38 @@ public class TimeRegion  {
         this.captionString = captionString;
     }
 
-    public String getCaptionString() {
-        return captionString;
+    public TimeRegion(int startTime, int endTime, String captionString) {
+        this.startTime = secondsToTimeString(startTime);
+        this.endTime = secondsToTimeString(endTime);
+        this.startTimeSeconds = startTime;
+        this.endTimeSeconds = endTime;
+        this.duration = endTimeSeconds - startTimeSeconds;
+        this.captionString = captionString;
     }
 
-    public void setCaptionString(String captionString) {
+    public TimeRegion(int startTime, String endTime, String captionString) {
+        this.startTime = secondsToTimeString(startTime);
+        this.endTime = endTime;
+        this.startTimeSeconds = startTime;
+        this.endTimeSeconds = calculateSeconds(endTime);
+        this.duration = endTimeSeconds - startTimeSeconds;
         this.captionString = captionString;
+    }
+
+
+
+
+
+    public String getCaptionString() {
+        return captionString;
     }
 
     public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
     public int getEndTimeSeconds() {
         return endTimeSeconds;
-    }
-
-    public void setEndTimeSeconds(int endTimeSeconds) {
-        this.endTimeSeconds = endTimeSeconds;
     }
 
     public double getImportance() {
@@ -105,6 +115,32 @@ public class TimeRegion  {
         return secondsCount;
     }
 
+    public static String secondsToTimeString(int seconds) {
+        int numSecondsRemaining = seconds;
+        /**
+         * youtube apparently will represent the string for a time over an hour
+         * still using minutes: eg
+         * https://www.youtube.com/watch?v=z8HKWUWS-lA
+         * 1 hour 17 minutes is: 79:17, so i'm not going to have an hour section in my code
+         */
+//        int hours = seconds/3600;
+//        numSecondsRemaining = numSecondsRemaining % 3600;
+
+        int minutes = numSecondsRemaining / 60;
+        numSecondsRemaining = numSecondsRemaining % 60;
+        StringBuilder resultantTimeString = new StringBuilder();
+        resultantTimeString.append(minutes).append(':');
+        /**
+         * catch the posibility of something like 0:02
+         * and return that instead of 0:2
+         */
+        if (numSecondsRemaining < 10) {
+            resultantTimeString.append('0');
+        }
+        resultantTimeString.append(numSecondsRemaining);
+        return resultantTimeString.toString();
+    }
+
     public int getDuration() {
         return duration;
     }
@@ -115,6 +151,6 @@ public class TimeRegion  {
                 "startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", captionString='" + captionString + '\'' +
-                '}';
+                '}' + '\n';
     }
 }

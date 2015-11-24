@@ -1,6 +1,10 @@
 package utils.Summarizer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import play.libs.Json;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Brian Zhao && Victor Kwak
@@ -73,5 +77,21 @@ public class Group {
 
     public int getStartTimeSeconds() {
         return startTimeSeconds;
+    }
+
+    public JsonNode getJson() {
+        HashMap jsonMap = new HashMap();
+        jsonMap.put("totalImportance", totalImportance);
+        jsonMap.put("totalDuration", totalDuration);
+        jsonMap.put("startTime", startTime);
+        jsonMap.put("endTime", endTime);
+        jsonMap.put("startTimeSeconds", startTimeSeconds);
+        jsonMap.put("endTimeSeconds", endTimeSeconds);
+        StringBuilder wordsSpokenInGroup = new StringBuilder();
+        for (TimeRegion timeRegion : group) {
+            wordsSpokenInGroup.append(timeRegion.getCaptionString()).append('\n');
+        }
+        jsonMap.put("wordsSpoken", wordsSpokenInGroup.toString());
+        return Json.toJson(jsonMap);
     }
 }
