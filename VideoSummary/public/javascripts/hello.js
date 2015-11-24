@@ -1,6 +1,7 @@
-
 var gCurrentTime = 0; // Horrible global state for now
 var gTimerid;
+var gSlices;
+var gSliceIndex = 0;
 
 /**
  * The player object that allows us to interact with the iframe
@@ -63,10 +64,16 @@ function checkCurrentTime(timeSlices) {
         if (timeSlices.length > 0) {
             player.pauseVideo();
             player.seekTo(timeSlices[0].startTimeSeconds);
-            console.log("Seeking to " + timeSlices[0].startTimeSeconds)
+            console.log("Seeking to " + timeSlices[0].startTimeSeconds);
             player.playVideo();
+            $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+            gSliceIndex++;
+            $($("#playlist-div").children()[gSliceIndex]).addClass("sel"); // Highlight the current playlist index
         } else {
+            // Reset everything and stop the video
             player.stopVideo()
+            $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+            gSliceIndex = 0;
         }
     }
 }
@@ -77,8 +84,16 @@ document.addEventListener("DOMContentLoaded", function () {
         var apiRequest = $.post("/times/" + window.vvv, function(data) {
             alert("success " + data);
             var slices = JSON.parse(data); // Expecting an array back! (It should probably get changed to a object though) TODO
+            gSlices = JSON.parse(data);
             $("#summarize-status").text("Retrieved summary, playing...");
             if (slices.length > 0) {
+                $("#playlist-div").empty();
+                for (var i = 0; i < slices.length; i++) {
+                    $("#playlist-div").append('<div class="section">' + JSON.stringify(slices[i]) + '</div>');
+                }
+
+                $($("#playlist-div").children()[gSliceIndex]).addClass("sel"); // Highlight the current playlist index
+
                 player.pauseVideo();
                 player.seekTo(slices[0].startTimeSeconds);
                 console.log("Initially seeking to " + slices[0].startTimeSeconds);
