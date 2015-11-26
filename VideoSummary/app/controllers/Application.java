@@ -15,7 +15,9 @@ import utils.Summarizer.*;
 import views.html.video;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -56,13 +58,18 @@ public class Application extends Controller {
             if (summaryResult == null) {
                 return internalServerError("Sorry but we had an error processing your video");
             }
-            List<Group> summaryGroups = summaryResult.generateSummary();
+            Map returnObject = new HashMap();
 
-            ArrayList<JsonNode> jsonNodes = new ArrayList<>();
+            List<Group> summaryGroups = summaryResult.generateSummary();
+            List<JsonNode> jsonNodes = new ArrayList<>();
             for (Group summary : summaryGroups) {
                 jsonNodes.add(summary.getJson());
             }
-            result = Json.toJson(jsonNodes).toString();
+
+            returnObject.put("Groups", jsonNodes);
+            returnObject.put("WordCloud: ", summaryResult.generateWordCloud());
+
+            result = Json.toJson(returnObject).toString();
             cache.set(videoId, result, Constants.CACHE_TIME);
         }
         return ok(result);

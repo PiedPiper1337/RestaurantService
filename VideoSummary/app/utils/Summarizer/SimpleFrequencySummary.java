@@ -71,6 +71,15 @@ public class SimpleFrequencySummary implements Summary{
         return createSummaryGroups(this.transcript, this.cutOffValue, this.normalizeOnDuration);
     }
 
+    @Override
+    public Map<String, Integer> generateWordCloud() {
+        Map<String, Integer> toReturn = new LinkedHashMap<>();
+        AllStringData allStringData = transcript.getAllStringData();
+        List<StringData> stringDataList = allStringData.getWordCloudData(Weight.TF, Constants.WORD_CLOUD_SIZE);
+        stringDataList.forEach(stringData -> toReturn.put(allStringData.getUnstemmedVersion(stringData.getWord()), (int)stringData.getTf()));
+        return toReturn;
+    }
+
     private List<Group> createSummaryGroups(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
         List<Group> groups = createGroups(transcript, cutOffValue, normalizeOnDuration);
         Collections.sort(groups, Collections.reverseOrder(normalizeOnDuration ? GroupComparators.normalizedTotalImportance : GroupComparators.totalImportance));
