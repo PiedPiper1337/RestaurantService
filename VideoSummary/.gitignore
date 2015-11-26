@@ -7,4 +7,5 @@ target
 /.settings
 /RUNNING_PID
 deployAmazon
+*.mp4
 *.conll
