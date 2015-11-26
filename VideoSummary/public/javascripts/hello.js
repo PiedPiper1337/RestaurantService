@@ -1,4 +1,4 @@
-var gCurrentTime = 0; // Horrible global state for now
+var gCurrentTime = 0; // Horrible global state for now, I'm so sorry
 var gTimerid;
 var gSlices;
 var gSliceIndex = 0;
@@ -23,6 +23,23 @@ function setSummarizationStatus(str) {
     $("#summarize-status").text(str);
 }
 
+function highlightPlaylistIndex(index) {
+    $($("#playlist-div").children()[index]).addClass("sel");}
+
+function removeHighlightPlaylistIndex(index) {
+    $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+}
+
+function nextSlice() {
+    if (gSliceIndex < gSlices.length - 1) {
+        player.seekTo(gSlices[gSliceIndex + 1].startTimeSeconds);
+    } else {
+        stopSummarization();
+        stopVideo();
+        setSummarizationStatus("Stopped");
+    }
+}
+
 /**
  * Function that is executed once the iframe is ready to play
  * */
@@ -40,15 +57,13 @@ function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
         clearInterval(gTimerid);
         setSummarizationStatus("Stopped");
-        //$("#summarize-status").text("Stopped summarization playback!");
-        /*setTimeout(function() {
-            //$("#summarize-status").text("");
-        }, 1500);*/
     }
 }
 
 function stopSummarization() {
     clearInterval(gTimerid);
+    $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+    gSliceIndex = 0;
 }
 
 function stopVideo() {
@@ -64,7 +79,6 @@ function checkCurrentTime(timeSlices) {
 
     if (timeSlices.length == 0) {
         stopSummarization();
-        //clearInterval(gTimerid);
         return;
     }
 
@@ -76,14 +90,13 @@ function checkCurrentTime(timeSlices) {
             player.seekTo(timeSlices[0].startTimeSeconds);
             console.log("Seeking to " + timeSlices[0].startTimeSeconds);
             player.playVideo();
-            $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+            removeHighlightPlaylistIndex(gSliceIndex);
             gSliceIndex++;
-            $($("#playlist-div").children()[gSliceIndex]).addClass("sel"); // Highlight the current playlist index
+            highlightPlaylistIndex(gSliceIndex);
         } else {
             // Reset everything and stop the video
-            player.stopVideo()
-            $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
-            gSliceIndex = 0;
+            stopSummarization();
+            stopVideo();
             setSummarizationStatus("Stopped");
         }
     }
@@ -94,12 +107,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var apiRequest = $.post("/times/" + window.vvv, function(data) {
             alert("success " + data);
-            var slices = JSON.parse(data); // Expecting an array back! (It should probably get changed to a object though) TODO
+            var slices = JSON.parse(data); // Expecting an array back! (It should probably get changed to an object though) TODO
             gSlices = JSON.parse(data);
             setSummarizationStatus("Successfully retrieved summary, playing...");
             //$("#summarize-status").text("Retrieved summary, playing...");
             if (slices.length > 0) {
-                $("#playlist-div").empty();
+                $("#playlist-div").empty(); // Clear the playlist
                 for (var i = 0; i < slices.length; i++) {
                     $("#playlist-div").append('<div class="section">' + i + '.) ' +
                         slices[i].startTime + ' - ' + slices[i].endTime + '<br/>' +
@@ -107,15 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         '...</div>');
                 }
 
-                $($("#playlist-div").children()[gSliceIndex]).addClass("sel"); // Highlight the current playlist index
+                highlightPlaylistIndex(gSliceIndex); // Highlight the current playlist index
 
                 player.pauseVideo();
                 player.seekTo(slices[0].startTimeSeconds);
-                console.log("Initially seeking to " + slices[0].startTimeSeconds);
                 player.playVideo();
             }
 
-            console.log("starting the timer with this array: " + typeof(slices));
             gTimerid = setInterval(checkCurrentTime, 500, slices);
         });
 
@@ -128,5 +139,9 @@ document.addEventListener("DOMContentLoaded", function () {
         stopSummarization();
         setSummarizationStatus("Stopped");
         stopVideo();
+    });
+
+    $("#nextButton").on('click', function() {
+       nextSlice();
     });
 }, false);
