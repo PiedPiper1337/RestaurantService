@@ -69,27 +69,53 @@ public class Application extends Controller {
     }
 
     /**
-     * takes a http request with v parameter
-     * checks if the url is directly inside 'v' or inside an entire url
+     * takes a http request with a parameter
+     * "v" parameter means somebody appended "sum" to a youtube link
+     * "url" parameter means the request came from our home page
      * displays youtube video
      *
      * @return
      */
     public Result displayVideo() {
-        String videoId = request().getQueryString("v");
-        if (videoId == null) {
-            logger.debug("video query was null, redirecting to index");
-//            return redirect(controllers.routes.Application.index());
-            return redirect("/");
+        String url = request().getQueryString("url");
+        if (url != null) {
+            logger.debug("The youtube url was: {}", url);
+            //TODO do a regex check, return failure if not matching youtube url syntax
+            if (StringManip.isFullUrl(url)) {
+                String videoId = StringManip.extractParameter(url, "v");
+                return ok(video.render(videoId));
+            } else {
+                return badRequest("nope dude");
+            }
+
+        } else {
+            String videoID = request().getQueryString("v");
+            if (videoID != null) {
+                logger.debug("Got a redirect from youtube.com url. The video ID is: {}", videoID);
+                return ok(video.render(videoID));
+            } else {
+                logger.debug("Received a bad url attempt at /watch with incorrect query string");
+                return notFound("Sorry, but there's nothing here!");
+            }
         }
 
-        if (StringManip.isFullUrl(videoId)) {
-            videoId = StringManip.extractParameter(videoId, "v");
-        }
 
-        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
-        logger.debug("The video ID is: {}", videoURLToEmbed);
-        return ok(video.render(videoURLToEmbed));
+
+
+
+
+//        String videoId = request().getQueryString("v");
+//        if (videoId == null) {
+//            logger.debug("video query was null, redirecting to index");
+////            return redirect(controllers.routes.Application.index());
+//            return redirect("/");
+//        }
+//
+//
+//
+//        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
+//        logger.debug("The video ID is: {}", videoURLToEmbed);
+//        return ok(video.render(videoURLToEmbed));
     }
 
     public Result displayTranscript() {

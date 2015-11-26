@@ -43,7 +43,9 @@ public class StringManip {
 
     //should probably be stronger check in the future
     public static boolean isFullUrl(String input) {
-        return input.contains("youtube.com");
+        return input.matches("https?://www.youtube.com/watch\\?v=.*");
+//        return input.contains("youtube.com");
+
     }
 
     public static String generateUrlFromVideoId(String videoId) {
