@@ -1,0 +1,38 @@
+@(title: String)
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/normalise.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/pageNotFound.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <style>
+        h2{
+           font-size: 500%;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="error-template">
+                        <h1>@title</h1>
+                        <h3>
+                            <br>Sorry, an error has occured. Requested page could not be loaded.
+                        </h3>
+                        <h2>
+                            <br>
+                            <br>
+                            (╯&deg;□&deg;）╯  ︵  &lt;/ǝlqɐʇ&gt;
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

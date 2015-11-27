@@ -1,0 +1,24 @@
+A "/etc/my.cnf" from another install may interfere with a Homebrew-built
+server starting up correctly.
+
+To connect:
+    /usr/local/opt/mysql55/bin/mysql -uroot
+
+This formula is keg-only, which means it was not symlinked into /usr/local.
+
+Conflicts with mysql, mariadb, percona-server, mysql-cluster, etc.
+
+Generally there are no consequences of this for you. If you build your
+own software and it requires this formula, you'll need to add to your
+build variables:
+
+    LDFLAGS:  -L/usr/local/opt/mysql55/lib
+    CPPFLAGS: -I/usr/local/opt/mysql55/include
+
+
+To have launchd start homebrew/versions/mysql55 at login:
+  ln -sfv /usr/local/opt/mysql55/*.plist ~/Library/LaunchAgents
+Then to load homebrew/versions/mysql55 now:
+  launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mysql55.plist
+Or, if you don't want/need launchctl, you can just run:
+  /usr/local/opt/mysql55/bin/mysql.server start

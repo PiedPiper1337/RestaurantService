@@ -30,4 +30,8 @@ public class Constants {
     //cache related constants
     public static final int CACHE_TIME = 15 * 60; //15 minutes
 
+    //html related constants
+    public static final String ERROR_404 = "Oops! 404 Not Found.";
+    public static final String ERROR_USER_BAD_URL = "Looks like this isn't a valid Youtube URL!";
+
 }

@@ -6,6 +6,7 @@ import play.data.validation.Constraints;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.Constraint;
 
 /**
  * Created by brianzhao on 10/27/15.
@@ -16,19 +17,21 @@ public class YoutubeVideo extends Model {
     public Long id;
 
     @Constraints.Required
-    @Column(columnDefinition = "VARCHAR(30)")
+    @Column(columnDefinition = "VARCHAR(32)")
     public String videoId;
 
+    @Constraints.Required
     @Column(columnDefinition = "LONGTEXT")
     public String transcript;
 
-    public YoutubeVideo(String videoId) {
-        this.videoId = videoId;
-    }
+    @Constraints.Required
+//    @Column(columnDefinition = "VARCHAR(128)")
+    public String title;
 
-    public YoutubeVideo(String videoId, String transcript) {
+    public YoutubeVideo(String videoId, String transcript, String title) {
         this.videoId = videoId;
         this.transcript = transcript;
+        this.title = title;
     }
 
     public String getTranscript() {

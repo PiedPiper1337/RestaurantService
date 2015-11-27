@@ -37,13 +37,17 @@ public class Application extends Controller {
 
     /**
      * we should replace this with a fail whale picture when we deploy
+     * this html template was obtained from: http://bootsnipp.com/snippets/featured/simple-404-not-found-page
+     * authored by: BhaumikPatel
+     * <p>
+     * //TODO make this better, I hacked together some formatting using html tutorial from first link of google search
      *
      * @param badResource
      * @return
      */
     public Result genericFailure(String badResource) {
         logger.trace("bad url attempt at {}", badResource);
-        return badRequest("This page does not exist.");
+        return notFound(views.html.PageNotFound.render(Constants.ERROR_404));
     }
 
     public Result blank() {
@@ -86,15 +90,14 @@ public class Application extends Controller {
     public Result displayVideo() {
         String url = request().getQueryString("url");
         if (url != null) {
-            logger.debug("The youtube url was: {}", url);
-            //TODO do a regex check, return failure if not matching youtube url syntax
             if (StringManip.isFullUrl(url)) {
+                logger.debug("The youtube url was: {}", url);
                 String videoId = StringManip.extractParameter(url, "v");
                 return ok(video.render(videoId));
             } else {
-                return badRequest("nope dude");
+                logger.debug("Received a malformed youtube url: {}", url);
+                return badRequest(views.html.PageNotFound.render(Constants.ERROR_USER_BAD_URL));
             }
-
         } else {
             String videoID = request().getQueryString("v");
             if (videoID != null) {
@@ -105,24 +108,6 @@ public class Application extends Controller {
                 return notFound("Sorry, but there's nothing here!");
             }
         }
-
-
-
-
-
-
-//        String videoId = request().getQueryString("v");
-//        if (videoId == null) {
-//            logger.debug("video query was null, redirecting to index");
-////            return redirect(controllers.routes.Application.index());
-//            return redirect("/");
-//        }
-//
-//
-//
-//        String videoURLToEmbed = videoId; //Constants.EMBED_URL + videoId;
-//        logger.debug("The video ID is: {}", videoURLToEmbed);
-//        return ok(video.render(videoURLToEmbed));
     }
 
     public Result displayTranscript() {
