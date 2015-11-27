@@ -29,10 +29,23 @@ public class Application extends Controller {
     @Inject
     CacheApi cache;
 
+    /**
+     * TODO FIX having entirely separate html and css page for mobile
+     * @return
+     */
     @With(IPAction.class)
     public Result index() {
         logger.trace("index method called");
-        return ok(views.html.index.render());
+        String[] agent = request().headers().get("user-agent");
+        if (agent.length < 1) {
+            return ok(views.html.index.render());
+        } else {
+            if (isMobileDevice(agent[0])) {
+                return ok(views.html.mobileIndex.render());
+            } else {
+                return ok(views.html.index.render());
+            }
+        }
     }
 
     /**
@@ -40,7 +53,7 @@ public class Application extends Controller {
      * this html template was obtained from: http://bootsnipp.com/snippets/featured/simple-404-not-found-page
      * authored by: BhaumikPatel
      * <p>
-     * //TODO make this better, I hacked together some formatting using html tutorial from first link of google search
+     * TODO make this better, I hacked together some formatting using html tutorial from first link of google search
      *
      * @param badResource
      * @return
@@ -149,4 +162,10 @@ public class Application extends Controller {
         return ok(summaryGroups.toString());
     }
 
+    public static boolean isMobileDevice(String userAgent) {
+        String lowerCaseUserAgent = userAgent.toLowerCase();
+        return lowerCaseUserAgent.contains("android")
+                || lowerCaseUserAgent.contains("iphone")
+                || lowerCaseUserAgent.contains("ipad");
+    }
 }
