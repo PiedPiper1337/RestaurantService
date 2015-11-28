@@ -1,6 +1,5 @@
 package utils.Summarizer;
 
-import com.google.inject.Inject;
 import models.YoutubeVideo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,11 +9,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import play.Logger;
 import utils.Constants;
-import utils.GlobalState;
 import utils.StringManip;
 
 import java.util.Iterator;
@@ -28,9 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class TranscriptFactory {
     private static final org.slf4j.Logger logger = Logger.of(TranscriptFactory.class).underlying();
     private static final int TIMEOUT = 10;
-
-    @Inject
-    private static WebDriver browser;
+    private static volatile int numConcurrentBrowswers = 0;
 
     /**
      * attempts to get a string representation of the transcript from a youtube url
@@ -42,6 +39,10 @@ public class TranscriptFactory {
      * captions do not have any newlines within them
      */
     private static YoutubeVideo createYoutubeVideoObjectFromVideoId(String videoId) {
+        if (getNumConcurrentBrowswers() >= Constants.NUM_CONCURRENT_VIDEO_INFO_RETRIEVAL_ACTORS) {
+            throw new RuntimeException("Too Many Active Video Retrieval Browsers. Try again later");
+        }
+        WebDriver browser = createWebDriver();
         WebElement moreButton = null;
         WebElement transcriptButton = null;
         WebElement transcriptContainer = null;
@@ -67,11 +68,11 @@ public class TranscriptFactory {
             logger.debug("retrieved video title: {}", videoTitle);
 
             moreButton = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.elementToBeClickable(By.id("action-panel-overflow-button")));
-            clickElement(moreButton);
+            clickElement(browser, moreButton);
             logger.debug("clicked more button");
         } catch (Exception e) {
             e.printStackTrace();
-            resetBrowser();
+            killWebDriver(browser);
             return null;
         }
 
@@ -81,20 +82,19 @@ public class TranscriptFactory {
                 transcriptButton = new WebDriverWait(browser, 1).until(ExpectedConditions.elementToBeClickable(By.className("action-panel-trigger-transcript")));
             } catch (Exception e) {
                 System.out.println("caught exception");
-                clickElement(moreButton);
+                clickElement(browser, moreButton);
                 System.out.println("clicked more button");
                 counter++;
             }
         }
         if (counter == 15) {
-            resetBrowser();
+            killWebDriver(browser);
             return null;
         }
 
         //click and wait for transcript to load
         try {
-//            Thread.sleep(1000);
-            clickElement(transcriptButton);
+            clickElement(browser, transcriptButton);
             transcriptContainer = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.visibilityOfElementLocated(By.id("transcript-scrollbox")));
             logger.debug("transcript successfully loaded into webdriver");
 
@@ -143,14 +143,12 @@ public class TranscriptFactory {
             logger.debug("transcript successfully parsed");
             long finishTime = System.currentTimeMillis();
             logger.debug("time taken: {}", (finishTime - startTime) * 1.0 / 1000);
-            //before returning, we should reset browser
-            resetBrowser();
-
+            killWebDriver(browser);
             return new YoutubeVideo(videoId, rawTranscript.toString(), videoTitle);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.toString());
-            resetBrowser();
+            killWebDriver(browser);
             return null;
         }
     }
@@ -183,28 +181,35 @@ public class TranscriptFactory {
         return new Transcript(rawTranscriptString);
     }
 
-    private static void resetBrowser() {
-        //if you're on a dev machine redirect to localhost 9000, otherwise 80
-        if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
-            browser.get("http://localhost:9000/blank");
-        } else {
-            browser.get("http://localhost/blank");
-        }
-    }
-
     /**
      * https://stackoverflow.com/questions/12035023/selenium-webdriver-cant-click-on-a-link-outside-the-page
+     *
      * @param element
      */
-    private static void clickElement(WebElement element) {
+    private static void clickElement(WebDriver browser, WebElement element) {
         /**
          * -150 is necessary for firefox.
          * this is absolutely ridiculous
          */
-        int elementPosition = element.getLocation().getY()-100;
+        int elementPosition = element.getLocation().getY() - 100;
         String js = String.format("window.scroll(0, %s)", elementPosition);
         logger.debug(js);
-        ((JavascriptExecutor)browser).executeScript(js);
+        ((JavascriptExecutor) browser).executeScript(js);
         element.click();
     }
+
+    private static synchronized WebDriver createWebDriver() {
+        numConcurrentBrowswers++;
+        return new ChromeDriver();
+    }
+
+    private static synchronized void killWebDriver(WebDriver webDriver) {
+        webDriver.quit();
+        numConcurrentBrowswers--;
+    }
+
+    private static synchronized int getNumConcurrentBrowswers() {
+        return numConcurrentBrowswers;
+    }
+
 }

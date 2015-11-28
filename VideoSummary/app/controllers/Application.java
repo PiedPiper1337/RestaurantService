@@ -65,7 +65,7 @@ public class Application extends Controller {
      */
     public Result genericFailure(String badResource) {
         logger.trace("bad url attempt at {}", badResource);
-        return notFound(views.html.PageNotFound.render(Constants.ERROR_404));
+        return notFound(views.html.errorPage.render(Constants.ERROR_404));
     }
 
     public Result blank() {
@@ -74,28 +74,34 @@ public class Application extends Controller {
 
     public Result summaryTimes(String videoId) {
         logger.debug("got a POST");
-        String result = cache.get(videoId);
-        if (result == null) {
-            Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
-            if (summaryResult == null) {
-                return internalServerError("Sorry but we had an error processing your video");
+        try {
+            String result = cache.get(videoId);
+            if (result == null) {
+                Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
+                if (summaryResult == null) {
+                    return internalServerError("Sorry but we had an error processing your video");
+                }
+                Map returnObject = new HashMap();
+
+                List<Group> summaryGroups = summaryResult.generateSummary();
+                List<JsonNode> jsonNodes = new ArrayList<>();
+                for (Group summary : summaryGroups) {
+                    jsonNodes.add(summary.getJson());
+                }
+
+                returnObject.put("Groups", jsonNodes);
+                returnObject.put("WordCloud", summaryResult.generateWordCloud());
+                returnObject.put("Histogram", summaryResult.histogram());
+
+                result = Json.toJson(returnObject).toString();
+                cache.set(videoId, result, Constants.CACHE_TIME);
             }
-            Map returnObject = new HashMap();
-
-            List<Group> summaryGroups = summaryResult.generateSummary();
-            List<JsonNode> jsonNodes = new ArrayList<>();
-            for (Group summary : summaryGroups) {
-                jsonNodes.add(summary.getJson());
-            }
-
-            returnObject.put("Groups", jsonNodes);
-            returnObject.put("WordCloud: ", summaryResult.generateWordCloud());
-            returnObject.put("Histogram", summaryResult.histogram());
-
-            result = Json.toJson(returnObject).toString();
-            cache.set(videoId, result, Constants.CACHE_TIME);
+            return ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString());
+            return internalServerError(views.html.errorPage.render(Constants.ERROR_INTERNAL_SERVER_EXCEPTION));
         }
-        return ok(result);
     }
 
     /**
@@ -107,25 +113,31 @@ public class Application extends Controller {
      * @return
      */
     public Result displayVideo() {
-        String url = request().getQueryString("url");
-        if (url != null) {
-            if (StringManip.isFullUrl(url)) {
-                logger.debug("The youtube url was: {}", url);
-                String videoId = StringManip.extractParameter(url, "v");
-                return ok(video.render(videoId));
+        try {
+            String url = request().getQueryString("url");
+            if (url != null) {
+                if (StringManip.isFullUrl(url)) {
+                    logger.debug("The youtube url was: {}", url);
+                    String videoId = StringManip.extractParameter(url, "v");
+                    return ok(video.render(videoId));
+                } else {
+                    logger.debug("Received a malformed youtube url: {}", url);
+                    return badRequest(views.html.errorPage.render(Constants.ERROR_USER_BAD_URL));
+                }
             } else {
-                logger.debug("Received a malformed youtube url: {}", url);
-                return badRequest(views.html.PageNotFound.render(Constants.ERROR_USER_BAD_URL));
+                String videoID = request().getQueryString("v");
+                if (videoID != null) {
+                    logger.debug("Got a redirect from youtube.com url. The video ID is: {}", videoID);
+                    return ok(video.render(videoID));
+                } else {
+                    logger.debug("Received a bad url attempt at /watch with incorrect query string");
+                    return notFound("Sorry, but there's nothing here!");
+                }
             }
-        } else {
-            String videoID = request().getQueryString("v");
-            if (videoID != null) {
-                logger.debug("Got a redirect from youtube.com url. The video ID is: {}", videoID);
-                return ok(video.render(videoID));
-            } else {
-                logger.debug("Received a bad url attempt at /watch with incorrect query string");
-                return notFound("Sorry, but there's nothing here!");
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString());
+            return internalServerError(views.html.errorPage.render(Constants.ERROR_INTERNAL_SERVER_EXCEPTION));
         }
     }
 

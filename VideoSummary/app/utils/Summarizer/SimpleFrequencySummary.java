@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by brianzhao && victorkwak
  */
-public class SimpleFrequencySummary implements Summary{
+public class SimpleFrequencySummary implements Summary {
     private static final org.slf4j.Logger logger = Logger.of(SimpleFrequencySummary.class).underlying();
     //histogram represents list of all timestamped regions of the video
     private Transcript transcript;
@@ -31,9 +31,6 @@ public class SimpleFrequencySummary implements Summary{
 
         //calculates all tf, df, tfidf, and local tf frequencies
         transcript.analyzeWordCount();
-
-        //TODO method to return the wordcount after analyzing, the tf or tfidf
-        //TODO method to return histogram data (importance for each timeregion)
     }
 
     public List<Group> generateSummary() {
@@ -41,10 +38,10 @@ public class SimpleFrequencySummary implements Summary{
     }
 
     public List<Group> generateSummary(Double percentageOfTopwords,
-                                            Double percentageOfVideo,
-                                            Double cutOffValue,
-                                            Weight weightType,
-                                            Boolean normalizeOnDuration) {
+                                       Double percentageOfVideo,
+                                       Double cutOffValue,
+                                       Weight weightType,
+                                       Boolean normalizeOnDuration) {
         resetMembers();
 
         //topwords reflects the proportion of the highest value words which will be deemed "important"
@@ -64,8 +61,6 @@ public class SimpleFrequencySummary implements Summary{
             assignImportanceValues(this.transcript, this.weightType, this.normalizeOnDuration);
         }
 
-//        logger.debug(histogram(this.transcript));
-
         if (cutOffValue == null) {
             this.cutOffValue = determineCutoffImportance(this.transcript);
         }
@@ -78,7 +73,7 @@ public class SimpleFrequencySummary implements Summary{
         Map<String, Integer> toReturn = new LinkedHashMap<>();
         AllStringData allStringData = transcript.getAllStringData();
         List<StringData> stringDataList = allStringData.getWordCloudData(Weight.TF, Constants.WORD_CLOUD_SIZE);
-        stringDataList.forEach(stringData -> toReturn.put(allStringData.getUnstemmedVersion(stringData.getWord()), (int)stringData.getTf()));
+        stringDataList.forEach(stringData -> toReturn.put(allStringData.getUnstemmedVersion(stringData.getWord()), (int) stringData.getTf()));
         return toReturn;
     }
 
@@ -118,7 +113,7 @@ public class SimpleFrequencySummary implements Summary{
     }
 
     /**
-     * returns a string of each timeregion within a transcript, followed by its importance value
+     * returns a JsonNode of a list of each timeregion within a transcript, followed by its importance value
      * only works if all of the importance values have been set
      *
      * @param
@@ -147,8 +142,8 @@ public class SimpleFrequencySummary implements Summary{
     private double determineCutoffImportance(Transcript transcript) {
         if (transcript.isImportanceValuesSet()) {
             List<TimeRegion> timeRegions = transcript.getTimeRegions();
-            Collections.sort(timeRegions,TimeRegionComparators.importanceComparator);
-            return timeRegions.get((int)(timeRegions.size() * Constants.DEFAULT_CUTOFF)).getImportance();
+            Collections.sort(timeRegions, TimeRegionComparators.importanceComparator);
+            return timeRegions.get((int) (timeRegions.size() * Constants.DEFAULT_CUTOFF)).getImportance();
         } else {
             throw new RuntimeException("Importance Values of Transcript TimeRegions not set");
         }
@@ -259,8 +254,6 @@ public class SimpleFrequencySummary implements Summary{
         }
         return groups;
     }
-
-    
 
 
     /**

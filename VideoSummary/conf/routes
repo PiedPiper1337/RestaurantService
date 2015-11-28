@@ -6,9 +6,6 @@
 #GET        /                    @controllers.Assets.at(path="/public/html",file="index.html")
 GET         /                            @controllers.Application.index()
 GET         /watch                       @controllers.Application.displayVideo()
-GET         /transcript                  @controllers.Application.displayTranscript()
-GET         /nlp                         @controllers.Application.runNLP()
-GET         /summarize                   @controllers.Application.summarize()
 GET         /blank                       @controllers.Application.blank()
 
 #Javascript API endpoints

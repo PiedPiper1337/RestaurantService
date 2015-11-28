@@ -15,5 +15,4 @@ public interface Summary {
 
     JsonNode histogram();
 
-
 }

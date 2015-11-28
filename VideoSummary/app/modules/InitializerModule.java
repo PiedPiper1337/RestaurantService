@@ -21,18 +21,6 @@ public class InitializerModule extends AbstractModule {
         logger.debug("Determining operating system...");
         determineOS();
         determineChromeDriver();
-        requestStaticInjection(TranscriptFactory.class);
-
-        /**
-         * use chromedriver for mac
-         */
-        if (GlobalState.operatingSystem == GlobalState.OS.Mac || GlobalState.operatingSystem == GlobalState.OS.Linux) {
-            //figures out what type of chromedriver to use based on os and sets the environment variable for it
-            logger.debug("Setting chrome driver environment variable...");
-            bind(WebDriver.class).to(ChromeDriverCustom.class).asEagerSingleton();
-        } else {
-            throw new RuntimeException("WINDOWS NOT SUPPORTED YET");
-        }
     }
 
     private void determineOS() {
@@ -48,6 +36,7 @@ public class InitializerModule extends AbstractModule {
     }
 
     private void determineChromeDriver() {
+        logger.debug("Setting chrome driver environment variable...");
         if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
             System.setProperty("webdriver.chrome.driver", "chromedriverMac");
         } else if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
@@ -57,7 +46,6 @@ public class InitializerModule extends AbstractModule {
         }
         logger.debug("chromedriver environment path set");
     }
-
 }
 
 
