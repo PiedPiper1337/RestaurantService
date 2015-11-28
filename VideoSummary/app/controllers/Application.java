@@ -36,16 +36,21 @@ public class Application extends Controller {
     @With(IPAction.class)
     public Result index() {
         logger.trace("index method called");
-        String[] agent = request().headers().get("user-agent");
-        if (agent.length < 1) {
-            return ok(views.html.index.render());
-        } else {
-            if (isMobileDevice(agent[0])) {
-                return ok(views.html.mobileIndex.render());
-            } else {
-                return ok(views.html.index.render());
-            }
-        }
+        /**
+         * support for returning a different mobile page
+         */
+//
+//        String[] agent = request().headers().get("user-agent");
+//        if (agent.length < 1) {
+//            return ok(views.html.index.render());
+//        } else {
+//            if (isMobileDevice(agent[0])) {
+//                return ok(views.html.mobileIndex.render());
+//            } else {
+//                return ok(views.html.index.render());
+//            }
+//        }
+        return ok(views.html.index.render());
     }
 
     /**
