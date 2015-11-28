@@ -1,5 +1,7 @@
 package utils.Summarizer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,5 +12,8 @@ public interface Summary {
     List<Group> generateSummary();
 
     Map<String, Integer> generateWordCloud();
+
+    JsonNode histogram();
+
 
 }

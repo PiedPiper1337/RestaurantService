@@ -1,6 +1,8 @@
 package utils.Summarizer;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import play.Logger;
+import play.libs.Json;
 import utils.Constants;
 
 import java.util.*;
@@ -65,7 +67,7 @@ public class SimpleFrequencySummary implements Summary{
 //        logger.debug(histogram(this.transcript));
 
         if (cutOffValue == null) {
-            this.cutOffValue = determinePossibleImportanceValue(this.transcript);
+            this.cutOffValue = determineCutoffImportance(this.transcript);
         }
 
         return createSummaryGroups(this.transcript, this.cutOffValue, this.normalizeOnDuration);
@@ -122,20 +124,13 @@ public class SimpleFrequencySummary implements Summary{
      * @param
      * @return
      */
-    public String histogram(Transcript transcript) {
-        if (transcript.isImportanceValuesSet()) {
-            List<TimeRegion> timeRegions = transcript.getTimeRegions();
+    public JsonNode histogram() {
+        if (this.transcript.isImportanceValuesSet()) {
+            List<TimeRegion> timeRegions = this.transcript.getTimeRegions();
             Collections.sort(timeRegions, TimeRegionComparators.startTimeComparator);
-            StringBuilder toReturn = new StringBuilder();
-            for (int i = 0; i < timeRegions.size(); i++) {
-                TimeRegion timeRegion = timeRegions.get(i);
-                toReturn.append(timeRegion.getStartTime()).append(Constants.TIME_REGION_DELIMITER)
-                        .append(timeRegion.getEndTime()).append(": ").append(timeRegion.getImportance());
-                if (i != timeRegions.size() - 1) {
-                    toReturn.append('\n');
-                }
-            }
-            return toReturn.toString();
+            List<JsonNode> jsonList = new ArrayList<>();
+            timeRegions.forEach(timeRegion -> jsonList.add(timeRegion.histogramComponent()));
+            return Json.toJson(jsonList);
         } else {
             throw new RuntimeException("Importance Values not Set");
         }
@@ -149,7 +144,7 @@ public class SimpleFrequencySummary implements Summary{
      * @param transcript
      * @return
      */
-    public double determinePossibleImportanceValue(Transcript transcript) {
+    private double determineCutoffImportance(Transcript transcript) {
         if (transcript.isImportanceValuesSet()) {
             List<TimeRegion> timeRegions = transcript.getTimeRegions();
             Collections.sort(timeRegions,TimeRegionComparators.importanceComparator);
@@ -170,7 +165,7 @@ public class SimpleFrequencySummary implements Summary{
      * @param proportionOfWordsDeemedImportant must be between 0 (exclusive) and 1 (inclusive)
      * @param normalizeOnDuration              choose whether to have importance values be divided by the length of the timeregion
      */
-    public void assignImportanceValuesDiscretely(Transcript transcript, Weight weightType, double proportionOfWordsDeemedImportant, boolean normalizeOnDuration) {
+    private void assignImportanceValuesDiscretely(Transcript transcript, Weight weightType, double proportionOfWordsDeemedImportant, boolean normalizeOnDuration) {
         if (proportionOfWordsDeemedImportant > 1 || proportionOfWordsDeemedImportant <= 0) {
             throw new RuntimeException("Bad Proportion Value passed in");
         }
@@ -216,7 +211,7 @@ public class SimpleFrequencySummary implements Summary{
      * @param weightType
      * @param normalizeOnDuration
      */
-    public void assignImportanceValues(Transcript transcript, Weight weightType, boolean normalizeOnDuration) {
+    private void assignImportanceValues(Transcript transcript, Weight weightType, boolean normalizeOnDuration) {
         List<TimeRegion> timeRegions = transcript.getTimeRegions();
         AllStringData allStringData = transcript.getAllStringData();
         for (TimeRegion currentTimeRegion : timeRegions) {
