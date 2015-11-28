@@ -33,5 +33,8 @@ public class Constants {
     //html related constants
     public static final String ERROR_404 = "Oops! 404 Not Found.";
     public static final String ERROR_USER_BAD_URL = "Looks like this isn't a valid Youtube URL!";
+    public static final String ERROR_INTERNAL_SERVER_EXCEPTION = "Oops! Sorry, we had an internal error!";
 
+    //internal system stress related constants
+    public static final int NUM_CONCURRENT_VIDEO_INFO_RETRIEVAL_ACTORS = 20;
 }
