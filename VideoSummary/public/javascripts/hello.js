@@ -111,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
             var wordcloud = response.WordCloud;
             window.tobias = response;
             console.log(resp);
-            alert("success " + groups);
             var slices = groups;
             gSlices = groups;
             setSummarizationStatus("Successfully retrieved summary, playing...");
@@ -133,20 +132,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
             gTimerid = setInterval(checkCurrentTime, 500, slices);
 
-            var fill = [];
+            var werds = [];
 
             for (var key in wordcloud) {
-                if (yourobject.hasOwnProperty(key)) {
-                    console.log(key, yourobject[key]);
+                if (wordcloud.hasOwnProperty(key)) {
+                    console.log(key, wordcloud[key]);
+                    werds.push({
+                        text: key,
+                        size: wordcloud[key]
+                    });
                 }
             }
 
+            $("#wordcloud-div").remove();
+            $("body").append('<div id="wordcloud-div"></div>');
+
             var fill = d3.scale.category20();
 
-            d3.layout.cloud().size([500, 500])
-                .words(wordcloud.map(function(d) {
-                    return {text: d, size: 10 + Math.random() * 50};
-                }))
+            d3.layout.cloud().size([700, 700])
+                .words(werds)
                 .rotate(function() { return ~~(Math.random() * 2) * 90; })
                 .font("Impact")
                 .fontSize(function(d) { return d.size; })
@@ -155,10 +159,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function draw(words) {
                 d3.select("#wordcloud-div").append("svg")
-                    .attr("width", 300)
-                    .attr("height", 300)
+                    .attr("width", 500)
+                    .attr("height", 500)
                     .append("g")
-                    .attr("transform", "translate(150,150)")
+                    .attr("transform", "translate(250,250)")
                     .selectAll("text")
                     .data(words)
                     .enter().append("text")
