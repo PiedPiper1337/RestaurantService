@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var response =  JSON.parse(resp);
             var groups = response.Groups;
             var wordcloud = response.WordCloud;
+            var histogram = response.Histogram;
             window.tobias = response;
             console.log(resp);
             var slices = groups;
@@ -136,7 +137,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             for (var key in wordcloud) {
                 if (wordcloud.hasOwnProperty(key)) {
-                    console.log(key, wordcloud[key]);
                     werds.push({
                         text: key,
                         size: wordcloud[key]
@@ -144,12 +144,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
+            /*
+            * Add the analytics section of the page
+            * */
             $("#wordcloud-div").remove();
+            $("#histogram-div").remove();
             $("body").append('<div id="wordcloud-div"></div>');
+            $("body").append('<div id="histogram-div"></div>');
 
+            /*
+            * Add the word cloud
+            * */
             var fill = d3.scale.category20();
 
-            d3.layout.cloud().size([700, 700])
+            d3.layout.cloud().size([500, 500])
                 .words(werds)
                 .rotate(function() { return ~~(Math.random() * 2) * 90; })
                 .font("Impact")
@@ -175,10 +183,69 @@ document.addEventListener("DOMContentLoaded", function () {
                     })
                     .text(function(d) { return d.text; });
             }
+
+            /*
+            * Add the histogram
+            * */
+            // Generate a Bates distribution of 10 random variables.
+            var values = d3.range(100).map(d3.random.bates(10));
+
+            // A formatter for counts.
+            var formatCount = d3.format(",.0f");
+
+            var margin = {top: 20, right: 20, bottom: 35, left: 20},
+                width = 500 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            var x = d3.scale.linear()
+                .domain([histogram[0].startTimeSeconds, histogram[histogram.length - 1].startTimeSeconds])
+                .range([0, width]);
+
+            // Generate a histogram using twenty uniformly-spaced bins.
+            var data = d3.layout.histogram()
+                .bins(x.ticks(20))
+                (values);
+
+            var y = d3.scale.linear()
+                .domain([0, d3.max(data, function(d) { return d.y; })])
+                .range([height, 0]);
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+            var svg = d3.select("#histogram-div").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var bar = svg.selectAll(".bar")
+                .data(data)
+                .enter().append("g")
+                .attr("class", "bar")
+                .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+            bar.append("rect")
+                .attr("x", 1)
+                .attr("width", x(data[0].dx) - 1)
+                .attr("height", function(d) { return height - y(d.y); });
+
+            bar.append("text")
+                .attr("dy", ".75em")
+                .attr("y", 6)
+                .attr("x", x(data[0].dx) / 2)
+                .attr("text-anchor", "middle")
+                .text(function(d) { return formatCount(d.y); });
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
         });
 
         apiRequest.fail(function(data) {
-            setSummarizationStatus("Response from server was a failure " + data); // TODO create better error response
+            setSummarizationStatus("Response from server was a failure " + JSON.stringify(data)); // TODO create better error response
         });
     });
 

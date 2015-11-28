@@ -75,18 +75,26 @@ body {
     display: block;
 }
 
+#analysis-header-div {
+    margin-left: 20px;
+    width: 100px;
+}
+
 #wordcloud-div {
     display: inline-block;
     width: 500px;
     height: 500px;
-    margin: 20px 0px 0px 20px;
+    margin: 20px 0 0 20px;
     border: 2px solid;
 }
 
-#analysis-header-div {
+#histogram-div {
+    width: 500px;
+    height: 500px;
+    border: 2px solid;
+    display: inline-block;
     margin-left: 20px;
-    margin-top: 75px;
-    width: 100px;
+    margin-bottom: 2px;
 }
 
 #search-bar {
@@ -96,6 +104,21 @@ body {
 
 #submit-button {
     display: inline-block;
+}
+
+.bar rect {
+    fill: steelblue;
+    shape-rendering: crispEdges;
+}
+
+.bar text {
+    fill: #fff;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
 form {
