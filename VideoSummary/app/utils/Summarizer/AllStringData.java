@@ -6,7 +6,7 @@ import java.util.*;
  * Created by brianzhao on 10/31/15.
  */
 public class AllStringData {
-    private HashMap<String, StringData> stringDataHashMap = new HashMap<>();
+    private Map<String, StringData> stringDataHashMap = new HashMap<>();
 
     /**
      * you should only add strings that do not already exist
@@ -83,26 +83,26 @@ public class AllStringData {
         stringDataHashMap.get(inputString).setTfIdf(df);
     }
 
-    public ArrayList<StringData> sortByTf() {
-        ArrayList<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
+    public List<StringData> sortByTf() {
+        List<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
         Collections.sort(stringDatas, StringDataComparators.tfCompare);
         return stringDatas;
     }
 
-    public ArrayList<StringData> sortByTfIdf() {
-        ArrayList<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
+    public List<StringData> sortByTfIdf() {
+        List<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
         Collections.sort(stringDatas, StringDataComparators.tfIdfCompare);
         return stringDatas;
     }
 
-    public ArrayList<StringData> sortByTfDescending() {
-        ArrayList<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
+    public List<StringData> sortByTfDescending() {
+        List<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
         Collections.sort(stringDatas, Collections.reverseOrder(StringDataComparators.tfCompare));
         return stringDatas;
     }
 
-    public ArrayList<StringData> sortByTfIdfDescending() {
-        ArrayList<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
+    public List<StringData> sortByTfIdfDescending() {
+        List<StringData> stringDatas = new ArrayList<>(stringDataHashMap.values());
         Collections.sort(stringDatas, Collections.reverseOrder(StringDataComparators.tfIdfCompare));
         return stringDatas;
     }
