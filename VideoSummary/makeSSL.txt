@@ -1,0 +1,6 @@
+openssl pkcs12 -export -in sslSumYoutube.crt -inkey www.sumyoutube.com.key -out sumyoutube.p12
+
+keytool -importkeystore -srckeystore sumyoutube.p12 -srcstoretype PKCS12 -destkeystore sumyoutube.jks -deststoretype JKS
+
+#also the password is 123456
+#sudo nohup ./videosummary -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=80 -Dhttps.port=443 -Dhttps.keyStore=sumyoutube.jks -Dhttps.keyStorePassword=123456 > application.log &
