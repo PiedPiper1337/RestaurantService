@@ -18,7 +18,7 @@ public class SimpleFrequencySummary implements Summary {
     private Double topWords;
     private Weight weightType;
     private Double cutOffValue;
-    private Double percentageofVideo;
+    private Double percentageOfVideo;
     private Boolean normalizeOnDuration;
 
     //list of all words - used to identify the word for each index of the TFIDF vector
@@ -49,7 +49,7 @@ public class SimpleFrequencySummary implements Summary {
 //        this.topWords = (percentageOfTopwords == null ? Constants.DEFAULT_PERCENTAGE_TOPWORDS : percentageOfTopwords );
         this.weightType = (weightType == null ? Constants.DEFAULT_WEIGHT_TYPE : weightType);
         this.cutOffValue = cutOffValue; // this one waits until after determining importances
-        this.percentageofVideo = percentageOfVideo == null ? Constants.DEFAULT_SUMMARY_PROPORTION : percentageOfVideo;
+        this.percentageOfVideo = percentageOfVideo == null ? Constants.DEFAULT_SUMMARY_PROPORTION : percentageOfVideo;
         this.normalizeOnDuration = normalizeOnDuration == null ? Constants.DEFAULT_NORMALIZE_ON_DURATION : normalizeOnDuration;
 
         //determines which way to sort all the words in the document
@@ -102,14 +102,14 @@ public class SimpleFrequencySummary implements Summary {
         topWords = null;
         weightType = null;
         cutOffValue = null;
-        percentageofVideo = null;
+        percentageOfVideo = null;
         normalizeOnDuration = null;
     }
 
 
     private double determineDurationOfSummary() {
         double lengthOfVideo = transcript.getDurationOfVideo();
-        return Math.min(Constants.DEFAULT_SUMMARY_DURATION_SECONDS, lengthOfVideo * this.percentageofVideo);
+        return Math.min(Constants.DEFAULT_SUMMARY_DURATION_SECONDS, lengthOfVideo * this.percentageOfVideo);
     }
 
     /**
@@ -178,7 +178,7 @@ public class SimpleFrequencySummary implements Summary {
 
         List<TimeRegion> timeRegions = transcript.getTimeRegions();
         for (TimeRegion currentTimeRegion : timeRegions) {
-            HashMap<String, Double> currentTF = currentTimeRegion.getLocalTF();
+            Map<String, Double> currentTF = currentTimeRegion.getLocalTF();
             double calculatedImportance = 0;
             for (String containedWord : currentTF.keySet()) {
                 //this is hacky and bad since i have to create a new stringdata object each time, this works because
@@ -210,7 +210,7 @@ public class SimpleFrequencySummary implements Summary {
         List<TimeRegion> timeRegions = transcript.getTimeRegions();
         AllStringData allStringData = transcript.getAllStringData();
         for (TimeRegion currentTimeRegion : timeRegions) {
-            HashMap<String, Double> currentTF = currentTimeRegion.getLocalTF();
+            Map<String, Double> currentTF = currentTimeRegion.getLocalTF();
             double calculatedImportance = 0;
             for (String containedWord : currentTF.keySet()) {
                 calculatedImportance += currentTF.get(containedWord) * allStringData.getWeight(containedWord, weightType);
