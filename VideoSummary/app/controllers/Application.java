@@ -92,6 +92,7 @@ public class Application extends Controller {
                 returnObject.put("Groups", jsonNodes);
                 returnObject.put("WordCloud", summaryResult.generateWordCloud());
                 returnObject.put("Histogram", summaryResult.histogram());
+                returnObject.put("Cutoff", summaryResult.cutOffValue());
 
                 result = Json.toJson(returnObject).toString();
                 cache.set(videoId, result, Constants.CACHE_TIME);

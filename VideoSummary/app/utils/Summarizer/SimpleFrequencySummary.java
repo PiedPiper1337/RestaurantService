@@ -77,6 +77,14 @@ public class SimpleFrequencySummary implements Summary {
         return toReturn;
     }
 
+    @Override
+    public double cutOffValue() {
+        if (cutOffValue == null) {
+            throw new RuntimeException("Cut Off Value not set!");
+        }
+        return this.cutOffValue;
+    }
+
     private List<Group> createSummaryGroups(Transcript transcript, double cutOffValue, boolean normalizeOnDuration) {
         List<Group> groups = createGroups(transcript, cutOffValue, normalizeOnDuration);
         Collections.sort(groups, Collections.reverseOrder(normalizeOnDuration ? GroupComparators.normalizedTotalImportance : GroupComparators.totalImportance));

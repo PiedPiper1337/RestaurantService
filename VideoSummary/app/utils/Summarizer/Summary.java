@@ -15,4 +15,6 @@ public interface Summary {
 
     JsonNode histogram();
 
+    double cutOffValue();
+
 }
