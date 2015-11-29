@@ -5,6 +5,7 @@ import play.Logger;
 import play.libs.Json;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TimeRegion {
     private static final org.slf4j.Logger logger = Logger.of(TimeRegion.class).underlying();
@@ -19,7 +20,7 @@ public class TimeRegion {
     private String captionString;
 
     //the localTF values
-    private HashMap<String, Double> localTF = new HashMap<>();
+    private Map<String, Double> localTF = new HashMap<>();
 
     private double[] tfIdfVector;
     private double importance = 0;
@@ -76,11 +77,11 @@ public class TimeRegion {
     }
 
 
-    public HashMap<String, Double> getLocalTF() {
+    public Map<String, Double> getLocalTF() {
         return localTF;
     }
 
-    public void setLocalTF(HashMap<String, Double> localTF) {
+    public void setLocalTF(Map<String, Double> localTF) {
         this.localTF = localTF;
     }
 
@@ -148,7 +149,7 @@ public class TimeRegion {
     }
 
     public JsonNode histogramComponent() {
-        HashMap toJsonify = new HashMap();
+        Map toJsonify = new HashMap();
         toJsonify.put("startTimeSeconds", startTimeSeconds);
         toJsonify.put("importance", importance);
         return Json.toJson(toJsonify);

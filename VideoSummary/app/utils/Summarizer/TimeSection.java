@@ -1,6 +1,6 @@
 package utils.Summarizer;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by brianzhao on 11/21/15.
@@ -23,9 +23,9 @@ public interface TimeSection {
 
     void setImportance(double importance);
 
-    HashMap<String, Double> getLocalTF();
+    Map<String, Double> getLocalTF();
 
-    void setLocalTF(HashMap<String, Double> localTF);
+    void setLocalTF(Map<String, Double> localTF);
 
     double[] getTfIdfVector();
 

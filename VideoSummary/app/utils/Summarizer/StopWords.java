@@ -1,10 +1,11 @@
 package utils.Summarizer;
 
 import java.lang.String;import java.util.HashSet;
+import java.util.Set;
 
 public class StopWords 
 {
-	private HashSet<String> words;
+	private Set<String> words;
 	
 	public StopWords()
 	{

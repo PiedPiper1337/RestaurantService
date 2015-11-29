@@ -5,6 +5,7 @@ import play.libs.Json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Brian Zhao && Victor Kwak
@@ -80,7 +81,7 @@ public class Group {
     }
 
     public JsonNode getJson() {
-        HashMap jsonMap = new HashMap();
+        Map jsonMap = new HashMap();
         jsonMap.put("totalImportance", totalImportance);
         jsonMap.put("totalDuration", totalDuration);
         jsonMap.put("startTime", startTime);
