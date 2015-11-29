@@ -215,8 +215,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             var layout = {
                 bargap: .25,
+                title: "Importance vs. Time",
                 xaxis: {title: "Seconds"},
-                yaxis: {title: "Importance"},
+                yaxis: {title: "Importance"}
             };
 
             Plotly.newPlot('histogram-div', data, layout);
