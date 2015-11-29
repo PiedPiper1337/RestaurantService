@@ -1,9 +1,6 @@
 package utils.Summarizer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by brianzhao on 10/31/15.
@@ -130,6 +127,23 @@ public class AllStringData {
             return stringDataHashMap.get(inputString).getTfIdf();
         } else {
             throw new RuntimeException("unsupported weighttype");
+        }
+    }
+
+    public List<StringData> getWordCloudData(Weight weightType, int sizeOfCloud) {
+        List<StringData> listOfStringData = new ArrayList<>();
+        stringDataHashMap.keySet().forEach(s -> listOfStringData.add(stringDataHashMap.get(s)));
+        if (weightType == Weight.TF) {
+            Collections.sort(listOfStringData, Collections.reverseOrder(StringDataComparators.tfCompare));
+        } else if (weightType == Weight.TFIDF) {
+            Collections.sort(listOfStringData, Collections.reverseOrder(StringDataComparators.tfIdfCompare));
+        } else {
+            throw new RuntimeException("unsupported weighttype");
+        }
+        if (listOfStringData.size() < sizeOfCloud) {
+            return listOfStringData;
+        } else {
+            return listOfStringData.subList(0, sizeOfCloud);
         }
     }
 

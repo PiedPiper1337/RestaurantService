@@ -1,6 +1,8 @@
 package utils.Summarizer;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang.ArrayUtils;
 import play.Logger;
+import play.libs.Json;
 
 import java.util.HashMap;
 
@@ -143,6 +145,13 @@ public class TimeRegion {
 
     public int getDuration() {
         return duration;
+    }
+
+    public JsonNode histogramComponent() {
+        HashMap toJsonify = new HashMap();
+        toJsonify.put("startTimeSeconds", startTimeSeconds);
+        toJsonify.put("importance", importance);
+        return Json.toJson(toJsonify);
     }
 
     @Override

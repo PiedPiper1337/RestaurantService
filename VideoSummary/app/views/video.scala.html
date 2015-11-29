@@ -4,7 +4,7 @@
 
 <html lang="en">
     <head>
-        <title>Video</title>
+        <title>TLDW Video Summary</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/video.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
@@ -18,14 +18,29 @@
 
     </head>
     <body>
-        <div id="videoDiv">
+        <div class="nav">
+            <a href="/">
+                <img id="nav-logo" src="assets/images/logoWithSlogan.png"/>
+            </a>
+        </div>
 
+        <div id="videoDiv"><!-- Youtube Video goes here --></div>
+
+        <div id="playlist-div">
+            <!--<div class="section sel"></div>
+            <div class="section"></div>-->
         </div>
 
         <div id="footnoteDiv">
-            <button id="summarizeButton" type="button">Play Summarization</button>
+            <button class="btn btn-primary" id="summarizeButton" type="button">Play Summarization</button>
+            <button class="btn btn-danger" id="stopButton" type="button">Stop Summarization</button>
+            <button class="btn btn-primary" id="nextButton" type="button">Next</button>
             <br />
-            <span id="summarize-status"> </span>
+
+            <span class="status-block">
+                <b>Summarization Status:</b>
+                <span id="summarize-status">Stopped </span>
+            </span>
         </div>
     </body>
 </html>
