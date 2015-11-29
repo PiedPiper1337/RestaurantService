@@ -111,7 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var wordcloud = response.WordCloud;
             var histogram = response.Histogram;
             window.tobias = response;
-            console.log(resp);
+            //console.log(resp);
+            console.log(JSON.stringify(histogram));
             var slices = groups;
             gSlices = groups;
             setSummarizationStatus("Successfully retrieved summary, playing...");
@@ -184,9 +185,45 @@ document.addEventListener("DOMContentLoaded", function () {
                     .text(function(d) { return d.text; });
             }
 
+            var histogramX = [];
+            var histogramY = [];
+
+            for (var i = 0; i < histogram.length; i++) {
+                histogramY.push(histogram[i].importance);
+                histogramX.push(histogram[i].startTimeSeconds);
+            }
+
+            var x = [];
+            for (var i = 0; i < 500; i ++) {
+                x[i] = Math.random();
+            }
+
+            var data = [
+                {
+                    autobiny: false,
+                    ybins: {
+                        start: 1,
+                        end: 70,
+                        size: 1
+                    },
+
+                    x: histogramX,
+                    y: histogramY,
+                    type: 'histogram'
+                }
+            ];
+
+            var layout = {
+                bargap: .25,
+                xaxis: {title: "Seconds"},
+                yaxis: {title: "Importance"},
+            };
+
+            Plotly.newPlot('histogram-div', data, layout);
+
             /*
             * Add the histogram
-            * */
+            *
             // Generate a Bates distribution of 10 random variables.
             var values = d3.range(100).map(d3.random.bates(10));
 
@@ -203,8 +240,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Generate a histogram using twenty uniformly-spaced bins.
             var data = d3.layout.histogram()
-                .bins(x.ticks(20))
-                (values);
+                .bins(x.ticks(100))
+                (histogram);
 
             var y = d3.scale.linear()
                 .domain([0, d3.max(data, function(d) { return d.y; })])
@@ -242,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
+                */
         });
 
         apiRequest.fail(function(data) {
