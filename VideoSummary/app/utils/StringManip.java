@@ -3,6 +3,7 @@ package utils;
 import play.Logger;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by brianzhao on 10/13/15.
@@ -13,7 +14,7 @@ public class StringManip {
         String[] entireUrlString = url.split("\\?");
         String params = entireUrlString[1];
         String[] keyValue = params.split("&");
-        HashMap<String, String> keyValueMap = new HashMap<>();
+        Map<String, String> keyValueMap = new HashMap<>();
 
         for (int i = 0; i < keyValue.length; i++) {
             String[] k = keyValue[i].split("=");

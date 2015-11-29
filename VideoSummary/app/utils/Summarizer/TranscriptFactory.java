@@ -18,6 +18,7 @@ import utils.StringManip;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -100,7 +101,7 @@ public class TranscriptFactory {
 
             Document doc = Jsoup.parse(transcriptContainer.getAttribute("innerHTML"));
             StringBuilder rawTranscript = new StringBuilder();
-            LinkedHashMap<String, String> timeToText = new LinkedHashMap<>();
+            Map<String, String> timeToText = new LinkedHashMap<>();
 
             for (Element timeRegion : doc.body().children()) {
                 Elements timeRegionData = timeRegion.children();

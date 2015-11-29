@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by brianzhao on 10/31/15.
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class Transcript {
     private static final org.slf4j.Logger logger = Logger.of(Transcript.class).underlying();
-    private ArrayList<TimeRegion> timeRegions;
+    private List<TimeRegion> timeRegions;
     private String entireTranscript;
     private String transcriptWithoutTimeValues; //this contains just the words said, used for
     private AllStringData allStringData = new AllStringData();
@@ -36,13 +37,13 @@ public class Transcript {
 
     /**
      * takes the transcript string, which has times and words said during times
-     * and returns an arraylist of timeregions
+     * and returns an List of timeregions
      *
      * @param entireTranscript
      * @return
      */
-    private ArrayList<TimeRegion> buildTimeRegionsFromString(String entireTranscript) {
-        ArrayList<TimeRegion> timeRegionList = new ArrayList<>();
+    private List<TimeRegion> buildTimeRegionsFromString(String entireTranscript) {
+        List<TimeRegion> timeRegionList = new ArrayList<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(entireTranscript.getBytes())));
             StringBuilder transcriptWordsWithoutTimes = new StringBuilder();
@@ -112,9 +113,9 @@ public class Transcript {
      * @param timeRegionList
      * @return
      */
-    private static ArrayList<TimeRegion> createTimeRegionsBasedOnSentences(List<String> allSentences, ArrayList<TimeRegion> timeRegionList) {
+    private static List<TimeRegion> createTimeRegionsBasedOnSentences(List<String> allSentences, List<TimeRegion> timeRegionList) {
         //start off at the beginning of the list of timeregions
-        ArrayList<TimeRegion> regionsBasedOnSentences = new ArrayList<>();
+        List<TimeRegion> regionsBasedOnSentences = new ArrayList<>();
         int startIndex = 0;
         int endIndex = startIndex;
         int stringIndexWithinCaption = 0;
@@ -193,8 +194,8 @@ public class Transcript {
      */
     private static List<String> getListOfSentences(String multipleSentences) {
         List<String> sentenceList = new ArrayList<>();
-        List<CoreLabel> tokens = new ArrayList<CoreLabel>();
-        PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<CoreLabel>(new StringReader(multipleSentences), new CoreLabelTokenFactory(), "");
+        List<CoreLabel> tokens = new ArrayList<>();
+        PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<>(new StringReader(multipleSentences), new CoreLabelTokenFactory(), "");
         while (tokenizer.hasNext()) {
             tokens.add(tokenizer.next());
         }
@@ -267,7 +268,7 @@ public class Transcript {
             String[] words = timeRegion.getCaptionString().toLowerCase().replaceAll("[^\\w ]", "").split("\\s+");
 
             //holder corresponds to the field "localTF" for each timeRegion object
-            HashMap<String, Double> localTf = new HashMap<>();
+            Map<String, Double> localTf = new HashMap<>();
             for (String currentWord : words) {
 
                 //skip the word if it is a stopword
@@ -318,7 +319,7 @@ public class Transcript {
         return analyzedYet;
     }
 
-    public ArrayList<TimeRegion> getTimeRegions() {
+    public List<TimeRegion> getTimeRegions() {
         return timeRegions;
     }
 
