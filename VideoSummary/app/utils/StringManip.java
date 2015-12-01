@@ -11,6 +11,9 @@ import java.util.Map;
 public class StringManip {
     private static final org.slf4j.Logger logger = Logger.of(StringManip.class).underlying();
     public static String extractParameter(String url, String key) {
+        if (url.matches("https?://youtu\\.be/.*")) {
+            return url.substring(url.lastIndexOf("/") + 1);
+        }
         String[] entireUrlString = url.split("\\?");
         String params = entireUrlString[1];
         String[] keyValue = params.split("&");
@@ -44,7 +47,7 @@ public class StringManip {
 
     //should probably be stronger check in the future
     public static boolean isFullUrl(String input) {
-        return input.matches("https?://www.youtube.com/watch\\?v=.*");
+        return input.matches("(https?://www\\.youtube\\.com/watch\\?v=.*)|(https?://youtu\\.be/.*)");
 //        return input.contains("youtube.com");
 
     }
