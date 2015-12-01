@@ -73,7 +73,26 @@ public class SimpleFrequencySummary implements Summary {
         Map<String, Integer> toReturn = new LinkedHashMap<>();
         AllStringData allStringData = transcript.getAllStringData();
         List<StringData> stringDataList = allStringData.getWordCloudData(Weight.TF, Constants.WORD_CLOUD_SIZE);
-        stringDataList.forEach(stringData -> toReturn.put(allStringData.getUnstemmedVersion(stringData.getWord()), (int) stringData.getTf()));
+        double totalOverallImportance = 0;
+
+        for (StringData stringData : stringDataList) {
+            totalOverallImportance += stringData.getTf();
+        }
+
+        if (totalOverallImportance > Constants.WORD_CLOUD_FAKE_MAX_IMPORTANCE) {
+            stringDataList.forEach(stringData ->
+                    toReturn.put(
+                            allStringData.getUnstemmedVersion(stringData.getWord()),
+                            (int) stringData.getTf()));
+        } else {
+            double ratio = Constants.WORD_CLOUD_FAKE_MAX_IMPORTANCE / totalOverallImportance;
+            stringDataList.forEach(stringData ->
+                    toReturn.put(
+                            allStringData.getUnstemmedVersion(stringData.getWord()),
+                            (int) (stringData.getTf() * ratio)));
+        }
+
+
         return toReturn;
     }
 

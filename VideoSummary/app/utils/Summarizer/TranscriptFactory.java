@@ -95,6 +95,7 @@ public class TranscriptFactory {
 
         //click and wait for transcript to load
         try {
+            Thread.sleep(500);
             clickElement(browser, transcriptButton);
             transcriptContainer = new WebDriverWait(browser, TIMEOUT).until(ExpectedConditions.visibilityOfElementLocated(By.id("transcript-scrollbox")));
             logger.debug("transcript successfully loaded into webdriver");
