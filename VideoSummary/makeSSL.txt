@@ -4,3 +4,4 @@ keytool -importkeystore -srckeystore sumyoutube.p12 -srcstoretype PKCS12 -destke
 
 #also the password is 123456
 sudo nohup ./tldwredirect -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=80 -Dhttps.port=443 -Dhttps.keyStore=sumyoutube.jks -Dhttps.keyStorePassword=123456 > application.log &
+sudo nohup ./videosummary -Dhttp.port=80 -Dplay.evolutions.db.default.autoApply=true > application.log &
