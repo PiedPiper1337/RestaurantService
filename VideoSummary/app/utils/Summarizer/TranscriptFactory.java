@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class TranscriptFactory {
     private static final org.slf4j.Logger logger = Logger.of(TranscriptFactory.class).underlying();
-    private static final int TIMEOUT = 10;
+    //TODO refactor this timeout to constants file
+    private static final int TIMEOUT = 5;
     private static volatile int numConcurrentBrowswers = 0;
 
     /**
@@ -78,7 +79,7 @@ public class TranscriptFactory {
         }
 
         int counter = 0;
-        while (transcriptButton == null && counter < 15) {
+        while (transcriptButton == null && counter < Constants.BROWSER_RETRIES) {
             try {
                 transcriptButton = new WebDriverWait(browser, 1).until(ExpectedConditions.elementToBeClickable(By.className("action-panel-trigger-transcript")));
             } catch (Exception e) {
@@ -88,7 +89,7 @@ public class TranscriptFactory {
                 counter++;
             }
         }
-        if (counter == 15) {
+        if (counter == Constants.BROWSER_RETRIES) {
             killWebDriver(browser);
             return null;
         }
