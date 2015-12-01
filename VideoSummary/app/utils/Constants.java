@@ -26,6 +26,7 @@ public class Constants {
     public static final boolean DEFAULT_NORMALIZE_ON_DURATION = false;
     public static final double DEFAULT_CUTOFF = 0.15;
     public static final int WORD_CLOUD_SIZE = 100;
+    public static final double WORD_CLOUD_FAKE_MAX_IMPORTANCE = 2000.0;
 
     //cache related constants
     public static final int CACHE_TIME = 15 * 60; //15 minutes
