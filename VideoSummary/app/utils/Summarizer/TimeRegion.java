@@ -52,10 +52,6 @@ public class TimeRegion {
         this.captionString = captionString;
     }
 
-
-
-
-
     public String getCaptionString() {
         return captionString;
     }
