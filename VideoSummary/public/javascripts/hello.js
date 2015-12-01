@@ -104,8 +104,10 @@ function checkCurrentTime(timeSlices) {
 
 document.addEventListener("DOMContentLoaded", function () {
     $("#summarizeButton").on('click', function() {
+        $("#summarizeButton").prop("disabled", true);
         setSummarizationStatus("Summarizing...");
         var apiRequest = $.post("/times/" + window.vvv, function(resp) {
+            $("#summarizeButton").prop("disabled", false);
             var response =  JSON.parse(resp);
             var groups = response.Groups;
             var wordcloud = response.WordCloud;
@@ -212,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         apiRequest.fail(function(data) {
+            $("#summarizeButton").prop("disabled", false);
             setSummarizationStatus("Response from server was a failure " + JSON.stringify(data)); // TODO create better error response
         });
     });
