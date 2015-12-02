@@ -31,7 +31,8 @@ function removeHighlightPlaylistIndex(index) {
 }
 
 function nextSlice() {
-    if (gSliceIndex < gSlices.length - 1) {
+    if (gSliceIndex < gSlices.length) {
+        console.log("gSliceIndex " + gSliceIndex + " length" + gSlices.length);
         player.seekTo(gSlices[gSliceIndex + 1].startTimeSeconds);
     } else {
         stopSummarization();
@@ -52,8 +53,6 @@ function onPlayerReady(event) {
  * Function that is executed when the state of the player changes
  * */
 function onPlayerStateChange(event) {
-    console.log("State changed!");
-    console.log("To: " + event.data.toString());
     if (event.data == YT.PlayerState.ENDED) {
         clearInterval(gTimerid);
         setSummarizationStatus("Stopped");
@@ -63,7 +62,7 @@ function onPlayerStateChange(event) {
 function stopSummarization() {
     clearInterval(gTimerid);
     $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
-    gSliceIndex = 0;
+    //gSliceIndex = 0;
 }
 
 function stopVideo() {
@@ -75,13 +74,6 @@ function stopVideo() {
  * Don't run this directly
  * */
 function checkCurrentTime(timeSlices) {
-    //console.log(player.getCurrentTime() + "waiting for " + timeSlices[0].endTimeSeconds);
-
-    if (timeSlices.length == 0) {
-        stopSummarization();
-        return;
-    }
-
     if (player.getPlayerState() == YT.PlayerState.PLAYING && player.getCurrentTime() > timeSlices[0].endTimeSeconds) {
         timeSlices.splice(0, 1);
 
@@ -98,6 +90,7 @@ function checkCurrentTime(timeSlices) {
             stopSummarization();
             stopVideo();
             setSummarizationStatus("Stopped");
+            console.log("Length is zero and things are playing");
         }
     }
 }
@@ -112,11 +105,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var groups = response.Groups;
             var wordcloud = response.WordCloud;
             var histogram = response.Histogram;
-            window.tobias = response;
-            //console.log(resp);
-            console.log(JSON.stringify(histogram));
+            console.log(JSON.stringify(groups));
             var slices = groups;
-            gSlices = groups;
+            gSlices = groups.slice();
             setSummarizationStatus("Successfully retrieved summary, playing...");
             if (slices.length > 0) {
                 $("#playlist-div").empty(); // Clear the playlist
