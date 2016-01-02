@@ -102,8 +102,8 @@ public class TranscriptFactory {
             logger.debug("transcript successfully loaded into webdriver");
 
             Document doc = Jsoup.parse(transcriptContainer.getAttribute("innerHTML"));
-            StringBuilder rawTranscript = new StringBuilder();
-            Map<String, String> timeToText = new LinkedHashMap<>();
+
+            LinkedHashMap<String, String> timeToText = new LinkedHashMap<>();
 
             for (Element timeRegion : doc.body().children()) {
                 Elements timeRegionData = timeRegion.children();
@@ -119,41 +119,55 @@ public class TranscriptFactory {
                 }
             }
 
-            Iterator<String> keyIterator = timeToText.keySet().iterator();
-            if (!keyIterator.hasNext()) { //need to have transcript of at least 2 regions
-                return null;
-            }
-
-            String time = keyIterator.next(); //get time
-            while (keyIterator.hasNext()) {
-                if (!timeToText.get(time).isEmpty()) { //if the current string isn't empty
-                    String segmentStartTime = time;
-                    time = keyIterator.next();
-                    String segmentEndTime = time;
-                    String contents = timeToText.get(segmentStartTime).replaceAll("\n", " ");
-                    rawTranscript.append(segmentStartTime).append(Constants.TIME_REGION_DELIMITER).append(segmentEndTime).append('\n').append(contents).append('\n');
-                } else {
-                    time = keyIterator.next();
-                }
-            }
-
-            //do last time
-            if (!timeToText.get(time).isEmpty()) { //if the current string isn't empty
-                String contents = timeToText.get(time).replaceAll("\n", " ");
-                rawTranscript.append(time).append(Constants.TIME_REGION_DELIMITER).append(videoEndTime).append('\n').append(contents);
-            }
+            String rawTranscript = timeToTextMappingToRawTranscript(timeToText, videoEndTime);
 
             logger.debug("transcript successfully parsed");
             long finishTime = System.currentTimeMillis();
             logger.debug("time taken: {}", (finishTime - startTime) * 1.0 / 1000);
             killWebDriver(browser);
-            return new YoutubeVideo(videoId, rawTranscript.toString(), videoTitle);
+            return new YoutubeVideo(videoId, rawTranscript, videoTitle);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.toString());
             killWebDriver(browser);
             return null;
         }
+    }
+
+
+    /**
+     * converts the linkedHashmap of key: timeString to value: word string that was said at that time into
+     * a complete, properly formatted raw transcript of type String
+     * @param timeToText
+     * @param videoEndTime
+     * @return
+     */
+    public static String timeToTextMappingToRawTranscript(LinkedHashMap<String, String> timeToText, String videoEndTime) {
+        StringBuilder rawTranscript = new StringBuilder();
+        Iterator<String> keyIterator = timeToText.keySet().iterator();
+        if (!keyIterator.hasNext()) { //need to have transcript of at least 1 region
+            return null;
+        }
+
+        String time = keyIterator.next(); //get time
+        while (keyIterator.hasNext()) {
+            if (!timeToText.get(time).isEmpty()) { //if the current string isn't empty
+                String segmentStartTime = time;
+                time = keyIterator.next();
+                String segmentEndTime = time;
+                String contents = timeToText.get(segmentStartTime).replaceAll("\n", " ").trim();
+                rawTranscript.append(segmentStartTime).append(Constants.TIME_REGION_DELIMITER).append(segmentEndTime).append('\n').append(contents).append('\n');
+            } else {
+                time = keyIterator.next();
+            }
+        }
+
+        //do last time
+        if (!timeToText.get(time).isEmpty()) { //if the current string isn't empty
+            String contents = timeToText.get(time).replaceAll("\n", " ");
+            rawTranscript.append(time).append(Constants.TIME_REGION_DELIMITER).append(videoEndTime).append('\n').append(contents);
+        }
+        return rawTranscript.toString();
     }
 
     /**
