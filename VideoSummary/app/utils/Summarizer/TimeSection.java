@@ -30,5 +30,4 @@ public interface TimeSection {
     double[] getTfIdfVector();
 
     void setTfIdfVector(double[] tfIdfVector);
-
 }

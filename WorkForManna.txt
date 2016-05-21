@@ -1,0 +1,6 @@
+1. Modifications to vidsum algorithm
+2. Run our program on department server
+3. Have everything done by Dec 26
+4. Make subsum work, clustering, do bing and google augmentation
+5. bing google augmentation write stuff on it, mathematically 
+	6. tf idf, clustering, subsum, and bing/google
