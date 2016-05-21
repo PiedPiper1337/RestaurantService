@@ -6,18 +6,23 @@ var gSliceIndex = 0;
 /**
  * The player object that allows us to interact with the iframe
  * */
-var player;
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('videoDiv', {
-        height: '450',
-        width: '800',
-        videoId: window.vvv,
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
-}
+//var player;
+//function onYouTubeIframeAPIReady() {
+//    player = new YT.Player('videoDiv', {
+//        height: '450',
+//        width: '800',
+//        videoId: window.vvv,
+//        playervars:{
+//            "enablejsapi":1,
+//            "origin":document.domain,
+//            "rel":0
+//        },
+//        events: {
+//            'onReady': onPlayerReady,
+//            'onStateChange': onPlayerStateChange
+//        }
+//    });
+//}
 
 function setSummarizationStatus(str) {
     $("#summarize-status").text(str);
@@ -44,10 +49,10 @@ function nextSlice() {
 /**
  * Function that is executed once the iframe is ready to play
  * */
-function onPlayerReady(event) {
-    //event.target.playVideo();
-    //playSlices(testSlices);
-}
+//function onPlayerReady(event) {
+//    //event.target.playVideo();
+//    //playSlices(testSlices);
+//}
 
 /**
  * Function that is executed when the state of the player changes

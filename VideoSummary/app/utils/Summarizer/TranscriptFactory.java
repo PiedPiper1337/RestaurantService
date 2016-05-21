@@ -10,10 +10,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import play.Logger;
 import utils.Constants;
+import utils.GlobalState;
 import utils.StringManip;
 
 import java.util.Iterator;
@@ -217,7 +219,14 @@ public class TranscriptFactory {
 
     private static synchronized WebDriver createWebDriver() {
         numConcurrentBrowswers++;
-        return new ChromeDriver();
+        if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.setBinary("/usr/bin/google-chrome-stable");
+            return new ChromeDriver(chromeOptions);
+        } else {
+            return new ChromeDriver();
+        }
+
     }
 
     private static synchronized void killWebDriver(WebDriver webDriver) {
