@@ -24,7 +24,8 @@ libraryDependencies ++= Seq(
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.languagetool-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.maltparser-asl" % "1.7.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.io.text-asl" % "1.7.0",
-  "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.io.conll-asl" % "1.7.0"
+  "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.io.conll-asl" % "1.7.0",
+  "org.apache.httpcomponents" % "httpclient" % "4.5.2"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the
