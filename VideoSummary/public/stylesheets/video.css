@@ -1,5 +1,6 @@
 body {
     background-color: #EDEDED;
+    width: 100%;
 }
 
 .nav {
@@ -42,34 +43,40 @@ body {
 
 #nav-logo {
     height: 50px;
-    width: 125px;
+    /*max-height: 100px;*/
+    /*width: 125px;*/
+    max-width: 250px;
     display: inline;
 }
 
 #videoDiv {
-    width: 800px;
+    /*width: 800px;*/
     height: 450px;
     display: inline-block;
-    margin: 20px 0 0 20px;
+    /*margin: 20px 0 0 20px;*/
     float: left;
+
+    padding: 0;
 }
 
 #playlist-div {
-    width: 400px;
+    /*width: 400px;*/
     height: 450px;
-    margin: 20px 0 0 0;
+    /*margin: 20px 0 0 0;*/
     display: inline-block;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     overflow-x: auto;
     background-color: #141414;
+
+    padding: 0;
 }
 
 #footnoteDiv {
-    width: 800px;
+    /*width: 800px;*/
     height: 100px;
     border: 2px solid;
     padding: 5px 5px;
-    margin: 20px 0 20px 20px;
+    /*margin: 20px 0 20px 20px;*/
     float: left;
     vertical-align: bottom;
     display: block;
@@ -124,4 +131,8 @@ body {
 
 form {
     display: inline;
+}
+
+.container-fluid {
+    padding: 0;
 }
