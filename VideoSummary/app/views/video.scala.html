@@ -58,48 +58,54 @@
             console.log(event);
         }
     </script>
+    <section id="front">
     <div class="nav container-fluid">
-    <div class="row-fluid">
-        <a class="col-xs-3" href="/">
-            <!-- <img id="nav-logo" src="assets/images/logo.png"/> -->
-            <picture>
+        <div class="row-fluid">
+            <!-- <a class="col-xs-3" href="/"> -->
+            <a href="/">
+                <!-- <img id="nav-logo" src="assets/images/logo.png"/> -->
+                <picture>
                     <source srcset="/assets/images/logo.png" media="(max-width: 30em)">
                      <img id="nav-logo" src="/assets/images/logoWithSlogan.png"/>
-            </picture>
-        </a>
+                 </picture>
+             </a>
 
-        <form class="col-xs-9" action="/watch" method="get" role="form">
-            <input id="search-bar" class="form-control input-sm" placeholder="" type="text" name="url" >
-            <input id="submit-button" name="Submit" value="Go!" type="submit" class="btn btn-default">
-        </form>
+             <!-- <form class="col-xs-9" action="/watch" method="get" role="form"> -->
+             <form action="/watch" method="get" role="form">
+                <input id="search-bar" class="form-control input-sm" placeholder="" type="text" name="url" >
+                <input id="submit-button" name="Submit" value="Go!" type="submit" class="btn btn-default">
+            </form>
+        </div>
     </div>
-    </div>
-    <div class="container-fluid">
+    <div class="mainFeature container-fluid">
         <div class="row-fluid" id="player-div">
             <div class="col-xs-12 col-sm-8" id="videoDiv">
                 <!-- Youtube Video goes here -->
 
             </div>
-        </div>
-        <div class="row-fluid">
-            <div class="col-xs-12 col-sm-4" id="playlist-div">
+            <div class="wrapper col-xs-12 col-sm-4 mobile-columns">
+                <div class="wrapper row-fluid">
+                    <div class="col-xs-12" id="footnoteDiv">
+                        <button class="btn btn-primary" id="summarizeButton" type="button">Play</button>
+                        <button class="btn btn-danger" id="stopButton" type="button">Stop</button>
+                        <button class="btn btn-primary" id="nextButton" type="button">Next</button>
+                        <br/>
+
+                        <span class="status-block">
+                            <b>Status:</b>
+                            <span id="summarize-status">Stopped </span>
+                        </span>
+                        <br />
+                    </div>
+                    <div class="col-xs-12" id="playlist-div">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row-fluid">
-        <div class="col-xs-12" id="footnoteDiv">
-                <button class="btn btn-primary" id="summarizeButton" type="button">Play Summarization</button>
-                <button class="btn btn-danger" id="stopButton" type="button">Stop Summarization</button>
-                <button class="btn btn-primary" id="nextButton" type="button">Next</button>
-                <br />
-
-                <span class="status-block">
-                    <b>Summarization Status:</b>
-                    <span id="summarize-status">Stopped </span>
-                </span>
-                <br />
-        </div>
-        </div>
     </div>
+    </section>
+
+
     <div id="analysis-header-div"><b>Analysis:</b></div>
 </body>
 </html>

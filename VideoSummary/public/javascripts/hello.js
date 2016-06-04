@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (slices.length > 0) {
                 $("#playlist-div").empty(); // Clear the playlist
                 for (var i = 0; i < slices.length; i++) {
-                    $("#playlist-div").append('<a href="#" onclick="player.seekTo('+slices[i].startTimeSeconds+'); return false;"><div class="section">' + (i+1) + '.) ' +
+                    $("#playlist-div").append('<a href="#" onclick="player.seekTo('+slices[i].startTimeSeconds+'); return false; highlightPlaylistIndex('+i+');"><div class="section">' + (i+1) + '.) ' +
                         slices[i].startTime + ' - ' + slices[i].endTime + '<br/>' +
                         slices[i].wordsSpoken.substring(0, 50) +
                         '...</div></a>');

@@ -4,7 +4,8 @@ body {
 }
 
 .nav {
-    height: 55px;
+    height: 6%;
+    min-height: 50px;
     width:100%;
     background-color: white;
     padding-left: 18px;
@@ -51,7 +52,8 @@ body {
 
 #videoDiv {
     /*width: 800px;*/
-    height: 450px;
+    /*height: 450px;*/
+    height: 100%;
     display: inline-block;
     /*margin: 20px 0 0 20px;*/
     float: left;
@@ -61,7 +63,8 @@ body {
 
 #playlist-div {
     /*width: 400px;*/
-    height: 450px;
+    /*height: 450px;*/
+    height: 90%;
     /*margin: 20px 0 0 0;*/
     display: inline-block;
     /*overflow-y: scroll;*/
@@ -73,7 +76,8 @@ body {
 
 #footnoteDiv {
     /*width: 800px;*/
-    height: 100px;
+    /*height: 100px;*/
+    height: 10%;
     border: 2px solid;
     padding: 5px 5px;
     /*margin: 20px 0 20px 20px;*/
@@ -102,7 +106,7 @@ body {
 }
 
 #search-bar {
-    width: 500px;
+    width: 60%;
     display: inline-block;
 }
 
@@ -112,6 +116,12 @@ body {
 
 #player-div {
     white-space: nowrap;
+
+    height: 100%;
+}
+
+#front {
+    height: 100vh;
 }
 
 .bar rect {
@@ -135,4 +145,16 @@ form {
 
 .container-fluid {
     padding: 0;
+}
+
+.mobile-columns {
+    padding: 0;
+}
+
+.mainFeature {
+    height: 94%;
+}
+
+.wrapper {
+    height: 100%;
 }
