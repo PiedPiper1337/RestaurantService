@@ -58,6 +58,7 @@ public class SubsumSummary implements Summary {
                 }
             }
         }
+        toReturn.add(currentGroup);
         Collections.sort(toReturn, GroupComparators.startTime);
         return toReturn;
     }
