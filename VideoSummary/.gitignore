@@ -11,4 +11,3 @@ deployAmazon
 *.conll
 *.DS_Store
 TimssTranscripts/
-lib/*
