@@ -33,7 +33,7 @@
 
 */
 
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

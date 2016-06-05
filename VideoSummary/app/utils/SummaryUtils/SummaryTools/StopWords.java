@@ -1,4 +1,4 @@
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 import java.lang.String;import java.util.HashSet;
 import java.util.Set;

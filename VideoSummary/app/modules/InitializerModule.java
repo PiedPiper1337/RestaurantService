@@ -1,11 +1,8 @@
 package modules;
 
 import com.google.inject.AbstractModule;
-import org.openqa.selenium.WebDriver;
 import play.Logger;
-import utils.ChromeDriverCustom;
 import utils.GlobalState;
-import utils.Summarizer.TranscriptFactory;
 
 /**
  * Created by brianzhao on 10/25/15.

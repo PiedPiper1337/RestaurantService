@@ -1,4 +1,4 @@
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

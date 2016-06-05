@@ -11,7 +11,7 @@ import play.mvc.With;
 import utils.Constants;
 import utils.Pipeline;
 import utils.StringManip;
-import utils.Summarizer.*;
+import utils.SummaryUtils.SummaryTools.*;
 import views.html.video;
 
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ public class Application extends Controller {
 
     /**
      * TODO FIX having entirely separate html and css page for mobile
+     *
      * @return
      */
     @With(IPAction.class)
@@ -77,7 +78,7 @@ public class Application extends Controller {
         try {
             String result = cache.get(videoId);
             if (result == null) {
-                Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
+                Summary summaryResult = SummaryFactory.generateSubsumSummary(videoId);
                 if (summaryResult == null) {
                     return internalServerError("Sorry but we had an error processing your video");
                 }
@@ -164,22 +165,22 @@ public class Application extends Controller {
         return ok(analyzed);
     }
 
-    public Result summarize() {
-        logger.trace("Summarization");
-        String videoId = request().getQueryString("v");
-        if (videoId == null) {
-            logger.debug("summarization parameter query was null, redirecting to index");
-            return redirect("/");
-        }
-        Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
-        if (summaryResult == null) {
-            return internalServerError("Sorry but we had an error processing your video");
-        }
-        List<Group> summaryGroups = summaryResult.generateSummary();
-
-        cache.set(videoId, Json.toJson(summaryGroups).toString(), Constants.CACHE_TIME);
-        return ok(summaryGroups.toString());
-    }
+//    public Result summarize() {
+//        logger.trace("Summarization");
+//        String videoId = request().getQueryString("v");
+//        if (videoId == null) {
+//            logger.debug("summarization parameter query was null, redirecting to index");
+//            return redirect("/");
+//        }
+//        Summary summaryResult = SummaryFactory.generateBasicSummary(videoId);
+//        if (summaryResult == null) {
+//            return internalServerError("Sorry but we had an error processing your video");
+//        }
+//        List<Group> summaryGroups = summaryResult.generateSummary();
+//
+//        cache.set(videoId, Json.toJson(summaryGroups).toString(), Constants.CACHE_TIME);
+//        return ok(summaryGroups.toString());
+//    }
 
     public static boolean isMobileDevice(String userAgent) {
         String lowerCaseUserAgent = userAgent.toLowerCase();

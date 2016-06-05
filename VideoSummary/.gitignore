@@ -9,3 +9,5 @@ target
 deployAmazon
 *.mp4
 *.conll
+*.DS_Store
+TimssTranscripts/

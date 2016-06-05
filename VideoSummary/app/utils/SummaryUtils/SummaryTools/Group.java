@@ -1,4 +1,4 @@
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import play.libs.Json;
@@ -22,7 +22,18 @@ public class Group {
     private int startTimeSeconds;
     private int endTimeSeconds;
 
+
+    /**
+     * only semantically makes sense if the timeregion to add is immediately adjacent to the last added timeregion
+     *
+     * @param timeRegion
+     * @param timeRegionImportanceIsDividedByDurationAlready
+     */
     public void add(TimeRegion timeRegion, boolean timeRegionImportanceIsDividedByDurationAlready) {
+        if (!group.isEmpty() && !group.get(group.size() - 1).isAdjacentTo(timeRegion)) {
+            throw new RuntimeException("Attempted to add nonconsecutive timeregion");
+        }
+
         if (timeRegionImportanceIsDividedByDurationAlready) {
             totalImportance += timeRegion.getImportance() * timeRegion.getDuration();
         } else {
@@ -30,16 +41,24 @@ public class Group {
         }
         totalDuration += timeRegion.getDuration();
         endTime = timeRegion.getEndTime();
-        endTimeSeconds = TimeRegion.calculateSeconds(endTime);
+        endTimeSeconds = TimeUtils.calculateSeconds(endTime);
         group.add(timeRegion);
         if (size() == 1) {
             startTime = group.get(0).getStartTime();
-            startTimeSeconds = TimeRegion.calculateSeconds(startTime);
+            startTimeSeconds = TimeUtils.calculateSeconds(startTime);
         }
     }
 
     public TimeRegion get(int i) {
         return group.get(i);
+    }
+
+    public TimeRegion getLast() {
+        if (group.isEmpty()) {
+            return null;
+        } else {
+            return group.get(group.size() - 1);
+        }
     }
 
     public int size() {

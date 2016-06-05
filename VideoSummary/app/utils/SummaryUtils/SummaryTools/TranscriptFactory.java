@@ -1,4 +1,4 @@
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 import models.YoutubeVideo;
 import org.jsoup.Jsoup;
@@ -20,7 +20,6 @@ import utils.StringManip;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 

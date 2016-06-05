@@ -1,9 +1,10 @@
-package utils.Summarizer;
+package utils.SummaryUtils.Summarizers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import play.Logger;
 import play.libs.Json;
 import utils.Constants;
+import utils.SummaryUtils.SummaryTools.*;
 
 import java.util.*;
 

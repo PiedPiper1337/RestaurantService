@@ -1,4 +1,4 @@
-package utils.Summarizer;
+package utils.SummaryUtils.SummaryTools;
 
 /**
  * Created by brianzhao on 6/3/15.

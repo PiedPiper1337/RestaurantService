@@ -1,6 +1,6 @@
 package utils;
 
-import utils.Summarizer.Weight;
+import utils.SummaryUtils.SummaryTools.Weight;
 
 /**
  * Created by brianzhao on 10/13/15.
