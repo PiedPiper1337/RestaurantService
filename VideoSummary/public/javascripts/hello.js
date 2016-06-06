@@ -117,10 +117,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (slices.length > 0) {
                 $("#playlist-div").empty(); // Clear the playlist
                 for (var i = 0; i < slices.length; i++) {
-                    $("#playlist-div").append('<a href="#" onclick="player.seekTo('+slices[i].startTimeSeconds+'); return false; highlightPlaylistIndex('+i+');"><div class="section">' + (i+1) + '.) ' +
-                        slices[i].startTime + ' - ' + slices[i].endTime + '<br/>' +
-                        slices[i].wordsSpoken.substring(0, 50) +
-                        '...</div></a>');
+                    $("#playlist-div").append('<a href="#" onclick="player.seekTo('+slices[i].startTimeSeconds+'); return false; highlightPlaylistIndex('+i+');">' +
+                        '<div class="section">' +
+                        '<div class="time">' + (i+1) + '.) ' + slices[i].startTime + ' - ' + slices[i].endTime + '</div>' +
+                        '<p>' + slices[i].wordsSpoken + '...</p>' + 
+                        '</div>' +
+                        '</a>');
                 }
 
                 highlightPlaylistIndex(gSliceIndex); // Highlight the current playlist index
@@ -148,8 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
             * */
             $("#wordcloud-div").remove();
             $("#histogram-div").remove();
-            $("body").append('<div id="wordcloud-div"></div>');
-            $("body").append('<div id="histogram-div"></div>');
+            $("#analysis").append('<div id="wordcloud-div"></div>');
+            $("#analysis").append('<div id="histogram-div"></div>');
 
             /*
             * Add the word cloud
