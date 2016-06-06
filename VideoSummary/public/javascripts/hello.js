@@ -35,38 +35,75 @@ function setSummarizationStatus(str) {
 
 function showPlayListIndex(index) {
     var currentPlaylist = $($($("#playlist-div").children()[index]).find(".hideContent"));
-    currentPlaylist.removeClass("hideContent");
+    var curHeight = currentPlaylist.height();
     currentPlaylist.addClass("sel");
+    var autoHeight = currentPlaylist.css('height', 'auto').height();
+    currentPlaylist.height(curHeight).animate({height: autoHeight}, 500);
 
     var previous = queue.shift();
 
     if(previous != index) {
-        hidePlayListContent(previous);
+        hidePlayListContent(previous, curHeight);
     }
 
     queue.push(index);
 }
 
+
+function hidePlayListContent(index, hideHeight) {
+    var currentPlaylist = $($($("#playlist-div").children()[index]).find(".hideContent"));
+    currentPlaylist.removeClass("sel");
+    var curHeight = currentPlaylist.height();
+    currentPlaylist.height(curHeight).animate({height: hideHeight}, 750);
+}
+
+
+// function showPlayListIndex(index) {
+//     var currentPlaylist = $($($("#playlist-div").children()[index]).find(".hideContent"));
+//     currentPlaylist.removeClass("hideContent");
+//     currentPlaylist.addClass("sel");
+
+//     curHeight = currentPlaylist.height(),
+//     autoHeight = currentPlaylist.css('height', 'auto').height();
+//     currentPlaylist.height(curHeight).animate({height: autoHeight}, 1000);
+
+//     var previous = queue.shift();
+
+//     if(previous != index) {
+//         hidePlayListContent(previous);
+//     }
+
+//     queue.push(index);
+// }
+
+// function hidePlayListContent(index) {
+//     var currentPlaylist = $($($("#playlist-div").children()[index]).find(".sel"));
+//     currentPlaylist.removeClass("sel");
+//     currentPlaylist.addClass("hideContent");
+// }
+
 function removeHighlightPlaylistIndex(index) {
     $($($("#playlist-div").children()[gSliceIndex]).find(".sel")).removeClass("sel");
 }
 
-function hidePlayListContent(index) {
-    var currentPlaylist = $($($("#playlist-div").children()[index]).find(".sel"));
-    currentPlaylist.removeClass("sel");
-    currentPlaylist.addClass("hideContent");
-}
 
 function nextSlice() {
-    if (gSliceIndex < gSlices.length) {
-        console.log("gSliceIndex " + gSliceIndex + " length" + gSlices.length);
-        player.seekTo(gSlices[gSliceIndex + 1].startTimeSeconds);
-    } else {
-        stopSummarization();
-        stopVideo();
-        setSummarizationStatus("Stopped");
-    }
+    var current = queue[0];
+    var next = (current+1)%gSlices.length;
+    showPlayListIndex(next);
+    player.seekTo(gSlices[next].startTimeSeconds);
 }
+
+// function nextSlice() {
+//     if (gSliceIndex < gSlices.length) {
+//         console.log("gSliceIndex " + gSliceIndex + " length" + gSlices.length);
+//         player.seekTo(gSlices[gSliceIndex + 1].startTimeSeconds);
+//     } else {
+//         stopSummarization();
+//         stopVideo();
+//         setSummarizationStatus("Stopped");
+//     }
+// }
 
 /**
  * Function that is executed once the iframe is ready to play
@@ -94,6 +131,22 @@ function stopSummarization() {
 
 function stopVideo() {
     player.stopVideo();
+}
+
+function addButtons() {
+    $("#summarizeButton").addClass("hideAll"); 
+    $("#stopButton").removeClass("hideAll"); 
+    $("#nextButton").removeClass("hideAll"); 
+}
+
+function removeButtons() {
+    $("#summarizeButton").removeClass("hideAll"); 
+    $("#stopButton").addClass("hideAll"); 
+    $("#nextButton").addClass("hideAll"); 
+}
+
+function removeTranscript() {
+    $("#playlist-div").empty();
 }
 
 /**
@@ -124,6 +177,7 @@ function checkCurrentTime(timeSlices) {
 
 document.addEventListener("DOMContentLoaded", function () {
     $("#summarizeButton").on('click', function() {
+        addButtons();
         $("#summarizeButton").prop("disabled", true);
         setSummarizationStatus("Summarizing...");
         var apiRequest = $.post("/times/" + window.vvv, function(resp) {
@@ -151,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 player.pauseVideo();
                 player.seekTo(slices[0].startTimeSeconds);
+                showPlayListIndex(0);
                 player.playVideo();
             }
 
@@ -238,9 +293,10 @@ document.addEventListener("DOMContentLoaded", function () {
             setSummarizationStatus("Response from server was a failure " + JSON.stringify(data)); // TODO create better error response
         });
     });
-
     $("#stopButton").on('click', function() {
+        removeButtons();
         stopSummarization();
+        removeTranscript();
         setSummarizationStatus("Stopped");
         stopVideo();
     });
