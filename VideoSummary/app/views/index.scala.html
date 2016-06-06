@@ -1,40 +1,39 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-    <title>Youtube Summarizer</title>
-    <meta name=viewport content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/normalise.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/index.css")">
-    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-    <script src="@routes.Assets.versioned("javascripts/jquery-2.1.4.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-</head>
-<body>
-    <section class="main-container">
-        <div id="search-container" class="container">
-        <div class="row-fluid">
-                <picture>
-                    <source srcset="/assets/images/logo.png" media="(max-width: 30em)">
-                     <img id="logo-img" src="/assets/images/logoWithSlogan.png"/>
-                 </picture>
-             </div>
-             <div class="row-fluid">
-                <form action="/watch" method="get" role="form">
-                    <input id="youtube-url-textbox" class="form-control input-lg" placeholder="YouTube URL e.g. &#34;https://www.youtube.com/watch?v=12345&#34;" type="text" name="url" >
-                    <input id="youtube-url-submit" name="Submit" value="Go!" type="submit" class="btn btn-default">
-                </form>
+    <head>
+        <title>Youtube Summarizer</title>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/normalise.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/index.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/jquery-2.1.4.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <section class="main-container">
+            <div id="search-container" class="container">
+                <div class="row-fluid">
+                    <picture>
+                        <source srcset="/assets/images/logo.png" media="(max-width: 30em)">
+                        <img id="logo-img" src="/assets/images/logoWithSlogan.png"/>
+                    </picture>
+                </div>
+                <div class="row-fluid">
+                    <form action="/watch" method="get" role="form">
+                        <input id="youtube-url-textbox" class="form-control input-lg" placeholder="YouTube URL e.g. &#34;https://www.youtube.com/watch?v=12345&#34;" type="text" name="url" >
+                        <input id="youtube-url-submit" name="Submit" value="Go!" type="submit" class="btn btn-default">
+                    </form>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="footer">
-    <span class="footer-text">
-        <a href="https://tldwio.wordpress.com/">Made with &#x2764 by BCV</a>
-    </span>
-</div>
-</section>
-</body>
+            <div class="footer">
+                <span class="footer-text">
+                    <a href="https://tldwio.wordpress.com/">Made with &#x2764 by BCV</a>
+                </span>
+            </div>
+        </section>
+    </body>
 </html>
