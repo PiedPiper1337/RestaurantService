@@ -2,12 +2,13 @@ var gCurrentTime = 0; // Horrible global state for now, I'm so sorry
 var gTimerid;
 var gSlices;
 var gSliceIndex = 0;
+var queue = [];
 
 /**
  * The player object that allows us to interact with the iframe
  * */
-//var player;
-//function onYouTubeIframeAPIReady() {
+// var player;
+// function onYouTubeIframeAPIReady() {
 //    player = new YT.Player('videoDiv', {
 //        height: '450',
 //        width: '800',
@@ -22,17 +23,38 @@ var gSliceIndex = 0;
 //            'onStateChange': onPlayerStateChange
 //        }
 //    });
-//}
+// }
 
 function setSummarizationStatus(str) {
     $("#summarize-status").text(str);
 }
 
-function highlightPlaylistIndex(index) {
-    $($("#playlist-div").children()[index]).addClass("sel");}
+// function highlightPlaylistIndex(index) {
+//     $($("#playlist-div").children()[index]).addClass("sel");
+// }
+
+function showPlayListIndex(index) {
+    var currentPlaylist = $($($("#playlist-div").children()[index]).find(".hideContent"));
+    currentPlaylist.removeClass("hideContent");
+    currentPlaylist.addClass("sel");
+
+    var previous = queue.shift();
+
+    if(previous != index) {
+        hidePlayListContent(previous);
+    }
+
+    queue.push(index);
+}
 
 function removeHighlightPlaylistIndex(index) {
-    $($("#playlist-div").children()[gSliceIndex]).removeClass("sel");
+    $($($("#playlist-div").children()[gSliceIndex]).find(".sel")).removeClass("sel");
+}
+
+function hidePlayListContent(index) {
+    var currentPlaylist = $($($("#playlist-div").children()[index]).find(".sel"));
+    currentPlaylist.removeClass("sel");
+    currentPlaylist.addClass("hideContent");
 }
 
 function nextSlice() {
@@ -87,9 +109,9 @@ function checkCurrentTime(timeSlices) {
             player.seekTo(timeSlices[0].startTimeSeconds);
             console.log("Seeking to " + timeSlices[0].startTimeSeconds);
             player.playVideo();
-            removeHighlightPlaylistIndex(gSliceIndex);
+            // removeHighlightPlaylistIndex(gSliceIndex);
             gSliceIndex++;
-            highlightPlaylistIndex(gSliceIndex);
+            // highlightPlaylistIndex(gSliceIndex);
         } else {
             // Reset everything and stop the video
             stopSummarization();
@@ -117,15 +139,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (slices.length > 0) {
                 $("#playlist-div").empty(); // Clear the playlist
                 for (var i = 0; i < slices.length; i++) {
-                    $("#playlist-div").append('<a href="#" onclick="player.seekTo('+slices[i].startTimeSeconds+'); return false; highlightPlaylistIndex('+i+');">' +
+                    $("#playlist-div").append('<a onclick="player.seekTo('+slices[i].startTimeSeconds+'); showPlayListIndex('+i+');">' +
                         '<div class="section">' +
                         '<div class="time">' + (i+1) + '.) ' + slices[i].startTime + ' - ' + slices[i].endTime + '</div>' +
-                        '<p>' + slices[i].wordsSpoken + '...</p>' + 
+                        '<p class="hideContent">' + slices[i].wordsSpoken + '</p>' + 
                         '</div>' +
                         '</a>');
                 }
 
-                highlightPlaylistIndex(gSliceIndex); // Highlight the current playlist index
+                // highlightPlaylistIndex(gSliceIndex); // Highlight the current playlist index
 
                 player.pauseVideo();
                 player.seekTo(slices[0].startTimeSeconds);
@@ -222,7 +244,6 @@ document.addEventListener("DOMContentLoaded", function () {
         setSummarizationStatus("Stopped");
         stopVideo();
     });
-
     $("#nextButton").on('click', function() {
        nextSlice();
     });
