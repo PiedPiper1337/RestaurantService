@@ -5,12 +5,107 @@
 <html lang="en">
     <head>
         <title>TLDW Video Summary</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/video.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+
         <script type="text/javascript">
-            window.vvv = "@video";
+                window.vvv = "@video";
         </script>
+
+
+            <!--<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+
+    </head>
+    <body onload="LoadYouTubeIframeAPI()">
+            <!--https://stackoverflow.com/questions/27205878/youtube-iframe-api-onready-and-onstatechanged-events-not-firing-->
+        <script type="text/javascript">
+                var player = null;
+                function LoadYouTubeIframeAPI()
+                {
+                    var scriptElement = document.createElement("script");
+                    scriptElement.src = "http://www.youtube.com/iframe_api";
+                    var firstScriptElement = document.getElementsByTagName("script")[0];
+                    firstScriptElement.parentNode.insertBefore(scriptElement,firstScriptElement);
+                }
+                function onYouTubeIframeAPIReady()
+                {
+                    var playerParams = {
+                        height: '450',
+                        width: '800',
+                        videoId: window.vvv,
+                        playerVars: {
+                            "enablejsapi":1,
+                            "origin":document.domain,
+                            "rel":0
+                        },
+                        events: {
+                            "onReady":onPlayerReady,
+                            "onError":onPlayerError,
+                            "onStateChange":onPlayerStateChange
+                        }
+                    };
+                    player = new YT.Player("videoDiv",playerParams);
+                }
+                function onPlayerReady(event) {
+                }
+                function onPlayerError(event) {
+                    console.log("Youtube error");
+                    console.log(event);
+                }
+        </script>
+
+        <div class="nav">
+                <!-- <a class="col-xs-3" href="/"> -->
+            <a href="/">
+                    <!-- <img id="nav-logo" src="assets/images/logo.png"/> -->
+                <picture>
+                    <source srcset="/assets/images/logo.png" media="(max-width: 30em)">
+                    <img id="nav-logo" src="/assets/images/logoWithSlogan.png"/>
+                </picture>
+            </a>
+
+                <!-- <form class="col-xs-9" action="/watch" method="get" role="form"> -->
+            <form action="/watch" method="get" role="form">
+                <input id="search-bar" class="form-control input-sm" placeholder="" type="text" name="url" >
+                <input id="submit-button" name="Submit" value="Go!" type="submit" class="btn btn-default">
+            </form>
+        </div>
+        </div>
+
+        <section id="front">
+            <div id="nav-offset"></div>
+            <div class="mainFeature container-fluid">
+                <div class="row-fluid" id="player-div">
+                    <div class="col-xs-12 col-sm-8" id="videoDiv">
+                            <!-- Youtube Video goes here -->
+
+                    </div>
+                    <div class="wrapper col-xs-12 col-sm-4 mobile-columns">
+                        <div class="wrapper row-fluid">
+                            <div class="col-xs-12" id="footnoteDiv">
+                                <button class="btn btn-primary" id="summarizeButton" type="button">Play</button>
+                                <button class="btn btn-danger hideAll" id="stopButton" type="button">Stop</button>
+                                <button class="btn btn-primary hideAll" id="nextButton" type="button">Next</button>
+                                    <!-- <br/> -->
+
+                                    <!-- <span class="status-block">
+									<b>Status:</b>
+									<span id="summarize-status">Stopped </span>
+								</span> -->
+                                    <!-- <br /> -->
+                            </div>
+                            <div class="col-xs-12" id="playlist-div">
+                            </div>
+                        </div>
+                    </div>
+                </div></div>
+        </section>
+
+        <section id="analysis">
+            <div id="analysis-header-div"><b>Analysis:</b></div>
+        </section>
 
         <script src="https://www.youtube.com/iframe_api" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/jquery-2.1.4.min.js")" type="text/javascript"></script>
@@ -18,76 +113,6 @@
         <script src="@routes.Assets.versioned("javascripts/d3.v3.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/d3.layout.cloud.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-            <!--<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
 
-    </head>
-    <body onload="LoadYouTubeIframeAPI()">
-        <!--https://stackoverflow.com/questions/27205878/youtube-iframe-api-onready-and-onstatechanged-events-not-firing-->
-        <script type="text/javascript">
-        var player = null;
-        function LoadYouTubeIframeAPI()
-        {
-            var scriptElement = document.createElement("script");
-            scriptElement.src = "http://www.youtube.com/iframe_api";
-            var firstScriptElement = document.getElementsByTagName("script")[0];
-            firstScriptElement.parentNode.insertBefore(scriptElement,firstScriptElement);
-        }
-        function onYouTubeIframeAPIReady()
-        {
-            var playerParams = {
-                height: '450',
-                width: '800',
-                videoId: window.vvv,
-                playerVars: {
-                    "enablejsapi":1,
-                    "origin":document.domain,
-                    "rel":0
-                },
-                events: {
-                    "onReady":onPlayerReady,
-                    "onError":onPlayerError,
-                    "onStateChange":onPlayerStateChange
-                }
-            };
-            player = new YT.Player("videoDiv",playerParams);
-        }
-        function onPlayerReady(event) {
-        }
-        function onPlayerError(event) {
-            console.log("Youtube error");
-            console.log(event);
-        }
-    </script>
-        <div class="nav">
-            <a href="/">
-                <img id="nav-logo" src="assets/images/logoWithSlogan.png"/>
-            </a>
-
-            <form action="/watch" method="get" role="form">
-                <input id="search-bar" class="form-control input-sm" placeholder="" type="text" name="url" >
-                <input id="submit-button" name="Submit" value="Go!" type="submit" class="btn btn-default">
-            </form>
-        </div>
-
-        <div id="player-div">
-            <div id="videoDiv"><!-- Youtube Video goes here --></div>
-
-            <div id="playlist-div">
-            </div>
-        </div>
-
-        <div id="footnoteDiv">
-            <button class="btn btn-primary" id="summarizeButton" type="button">Play Summarization</button>
-            <button class="btn btn-danger" id="stopButton" type="button">Stop Summarization</button>
-            <button class="btn btn-primary" id="nextButton" type="button">Next</button>
-            <br />
-
-            <span class="status-block">
-                <b>Summarization Status:</b>
-                <span id="summarize-status">Stopped </span>
-            </span>
-            <br />
-        </div>
-        <div id="analysis-header-div"><b>Analysis:</b></div>
     </body>
 </html>
