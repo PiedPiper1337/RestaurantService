@@ -222,6 +222,8 @@ public class TranscriptFactory {
         if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.setBinary("/usr/bin/google-chrome-stable");
+//            https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
+            chromeOptions.addArguments("--no-sandbox");
             return new ChromeDriver(chromeOptions);
         } else {
             return new ChromeDriver();
