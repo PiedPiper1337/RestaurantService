@@ -1,11 +1,11 @@
 package modules;
 
 import com.google.inject.AbstractModule;
-import org.openqa.selenium.WebDriver;
 import play.Logger;
-import utils.ChromeDriverCustom;
 import utils.GlobalState;
-import utils.Summarizer.TranscriptFactory;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by brianzhao on 10/25/15.
@@ -20,7 +20,7 @@ public class InitializerModule extends AbstractModule {
         //figures out what current OS is and stores it in global state
         logger.debug("Determining operating system...");
         determineOS();
-        determineChromeDriver();
+        determineSeleniumUrl();
     }
 
     private void determineOS() {
@@ -35,12 +35,23 @@ public class InitializerModule extends AbstractModule {
         }
     }
 
-    private void determineChromeDriver() {
+    private void determineSeleniumUrl() {
         logger.debug("Setting chrome driver environment variable...");
+        //todo fix this hardcoding with config/environment read
         if (GlobalState.operatingSystem == GlobalState.OS.Mac) {
-            System.setProperty("webdriver.chrome.driver", "chromedriverMac");
+            try {
+                GlobalState.seleniumURL = new URL("http://localhost:4444/wd/hub");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
         } else if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
-            System.setProperty("webdriver.chrome.driver", "chromedriverLinux");
+            try {
+                GlobalState.seleniumURL = new URL("http://192.168.2.10:4444/wd/hub");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
         } else {
             throw new RuntimeException("Windows not supported yet");
         }

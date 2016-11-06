@@ -9,8 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import play.Logger;
@@ -18,9 +18,11 @@ import utils.Constants;
 import utils.GlobalState;
 import utils.StringManip;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -140,6 +142,7 @@ public class TranscriptFactory {
     /**
      * converts the linkedHashmap of key: timeString to value: word string that was said at that time into
      * a complete, properly formatted raw transcript of type String
+     *
      * @param timeToText
      * @param videoEndTime
      * @return
@@ -181,8 +184,11 @@ public class TranscriptFactory {
     public static Transcript getTranscript(String inputString) {
         String videoId = StringManip.isFullUrl(inputString) ? StringManip.getVideoId(inputString) : inputString;
         String rawTranscriptString;
-        YoutubeVideo youtubeVideo = YoutubeVideo.find.where().eq("videoId", videoId).findUnique();
-        if (youtubeVideo == null) {
+        //todo fix this to findunique, and solve issue with concurrent adds of same video to db
+        //this is a hack to not crash when concurrent additions are made
+        List<YoutubeVideo> youtubeVideoList = YoutubeVideo.find.where().eq("videoId", videoId).findList();
+        YoutubeVideo youtubeVideo;
+        if (youtubeVideoList == null || youtubeVideoList.size() == 0) {
             logger.debug("video hasn't been seen before");
             youtubeVideo = TranscriptFactory.createYoutubeVideoObjectFromVideoId(videoId);
             //TODO make all exceptions throw up to application level
@@ -194,6 +200,7 @@ public class TranscriptFactory {
             youtubeVideo.save();
             logger.debug("video transcript saved in database");
         } else {
+            youtubeVideo = youtubeVideoList.get(0);
             logger.debug("using database transcript");
             rawTranscriptString = youtubeVideo.getTranscript();
         }
@@ -219,16 +226,10 @@ public class TranscriptFactory {
 
     private static synchronized WebDriver createWebDriver() {
         numConcurrentBrowswers++;
-        if (GlobalState.operatingSystem == GlobalState.OS.Linux) {
-            ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.setBinary("/usr/bin/google-chrome-stable");
-//            https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
-            chromeOptions.addArguments("--no-sandbox");
-            return new ChromeDriver(chromeOptions);
-        } else {
-            return new ChromeDriver();
-        }
-
+        //assumes you have docker-selenium running locally,
+        //available here: https://github.com/elgalu/docker-selenium
+        //todo add config or environment variable read here, so that url of docker-selenium can be dynamic
+        return new RemoteWebDriver(GlobalState.seleniumURL, DesiredCapabilities.chrome());
     }
 
     private static synchronized void killWebDriver(WebDriver webDriver) {
